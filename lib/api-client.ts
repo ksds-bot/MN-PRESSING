@@ -1,104 +1,253 @@
-// Example usage of the protected API route with JWT authentication
+/**
+ * Client-side API functions for authenticated requests
+ */
 
-interface AuthResponse {
-  message: string;
-  user: {
-    id: string;
-    email: string;
-  };
-  timestamp: string;
-}
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
 
-interface DataResponse extends AuthResponse {
-  data?: any;
+export interface ApiResponse<T = any> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  message?: string;
 }
 
 /**
- * Fetch data from protected route with JWT token
+ * Make an authenticated GET request
  */
-export async function fetchProtectedData(token: string): Promise<AuthResponse> {
+export async function fetchProtectedData<T = any>(
+  token: string,
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<ApiResponse<T>> {
   try {
-    const response = await fetch('/api/protected', {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
+        ...options.headers,
       },
+      ...options,
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      return {
+        success: false,
+        error: data.error || 'Request failed',
+      };
     }
 
-    return await response.json();
+    return {
+      success: true,
+      data,
+    };
   } catch (error) {
-    console.error('Failed to fetch protected data:', error);
-    throw error;
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
   }
 }
 
 /**
- * Post data to protected route with JWT token
+ * Make an authenticated POST request
  */
-export async function postProtectedData(
+export async function postProtectedData<T = any>(
   token: string,
-  data: any
-): Promise<DataResponse> {
+  endpoint: string,
+  body: any,
+  options: RequestInit = {}
+): Promise<ApiResponse<T>> {
   try {
-    const response = await fetch('/api/protected', {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
+        ...options.headers,
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(body),
+      ...options,
     });
 
+    const data = await response.json();
+
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      return {
+        success: false,
+        error: data.error || 'Request failed',
+      };
     }
 
-    return await response.json();
+    return {
+      success: true,
+      data,
+    };
   } catch (error) {
-    console.error('Failed to post protected data:', error);
-    throw error;
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
   }
 }
 
 /**
- * Example usage in a React component
+ * Make an authenticated PUT request
  */
-export function ProtectedDataExample() {
-  const [data, setData] = React.useState<AuthResponse | null>(null);
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
+export async function putProtectedData<T = any>(
+  token: string,
+  endpoint: string,
+  body: any,
+  options: RequestInit = {}
+): Promise<ApiResponse<T>> {
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+      body: JSON.stringify(body),
+      ...options,
+    });
 
-  const handleFetchData = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
-      const result = await fetchProtectedData(token);
-      setData(result);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: data.error || 'Request failed',
+      };
     }
-  };
 
-  return (
-    <div>
-      <button onClick={handleFetchData} disabled={loading}>
-        {loading ? 'Loading...' : 'Fetch Protected Data'}
-      </button>
-      {error && <p style={{ color: 'red' }}>Error: {error}</p>}
-      {data && (
-        <pre>{JSON.stringify(data, null, 2)}</pre>
-      )}
-    </div>
-  );
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+/**
+ * Make an authenticated DELETE request
+ */
+export async function deleteProtectedData<T = any>(
+  token: string,
+  endpoint: string,
+  options: RequestInit = {}
+): Promise<ApiResponse<T>> {
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+      ...options,
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: data.error || 'Request failed',
+      };
+    }
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+/**
+ * Get token from localStorage
+ */
+export function getToken(): string | null {
+  if (typeof window === 'undefined') return null;
+  return localStorage.getItem('authToken');
+}
+
+/**
+ * Set token in localStorage
+ */
+export function setToken(token: string): void {
+  if (typeof window === 'undefined') return;
+  localStorage.setItem('authToken', token);
+}
+
+/**
+ * Remove token from localStorage
+ */
+export function removeToken(): void {
+  if (typeof window === 'undefined') return;
+  localStorage.removeItem('authToken');
+}
+
+/**
+ * Check if user is authenticated
+ */
+export function isAuthenticated(): boolean {
+  return getToken() !== null;
+}
+
+/**
+ * Refresh authentication token
+ */
+export async function refreshAuthToken(refreshToken: string): Promise<ApiResponse<{ token: string }>> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refreshToken }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        success: false,
+        error: data.error || 'Token refresh failed',
+      };
+    }
+
+    setToken(data.token);
+
+    return {
+      success: true,
+      data,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Token refresh failed',
+    };
+  }
+}
+
+/**
+ * Logout user
+ */
+export function logout(): void {
+  removeToken();
+  if (typeof window !== 'undefined') {
+    window.location.href = '/login';
+  }
 }
