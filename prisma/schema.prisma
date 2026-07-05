@@ -1,0 +1,179 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================================
+// USERS & AUTHENTICATION
+// ============================================================================
+
+enum UserRole {
+  ADMIN
+  EMPLOYEE
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String   // bcrypt hashed
+  role      UserRole @default(EMPLOYEE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  orders    Order[]
+  payments  Payment[]
+
+  @@map("users")
+}
+
+// ============================================================================
+// CUSTOMERS
+// ============================================================================
+
+model Customer {
+  id          String   @id @default(cuid())
+  fullName    String
+  phoneNumber String
+  email       String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  orders  Order[]
+  photos  Photo[]
+  payments Payment[]
+
+  @@map("customers")
+}
+
+// ============================================================================
+// ORDERS
+// ============================================================================
+
+enum OrderStatus {
+  RECEIVED
+  WASHING
+  IRONING
+  READY
+  DELIVERED
+}
+
+model Order {
+  id               String      @id @default(cuid())
+  receiptNumber    String      @unique @default(cuid())
+  customerId       String
+  createdById      String?
+  depositDate      DateTime
+  expectedReturnDate DateTime
+  deliveryDate     DateTime?
+  status           OrderStatus @default(RECEIVED)
+  observations     String?
+  totalPrice       Float
+  paidAmount       Float       @default(0)
+  remainingAmount  Float
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  // Relations
+  customer Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  createdBy User?   @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  garments Garment[]
+  photos   Photo[]
+  payments Payment[]
+
+  @@index([customerId])
+  @@index([createdById])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+// ============================================================================
+// GARMENTS
+// ============================================================================
+
+model Garment {
+  id           String   @id @default(cuid())
+  orderId      String
+  type         String   // e.g., "Shirt", "Pants", "Dress"
+  description  String
+  observations String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  order  Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  photos Photo[]
+
+  @@index([orderId])
+  @@map("garments")
+}
+
+// ============================================================================
+// PHOTOS
+// ============================================================================
+
+model Photo {
+  id        String   @id @default(cuid())
+  orderId   String?
+  garmentId String?
+  customerId String?
+  url       String   // Cloudinary URL
+  fileName  String
+  publicId  String?  // Cloudinary public ID for deletion
+  createdAt DateTime @default(now())
+
+  // Relations
+  order    Order?    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  garment  Garment?  @relation(fields: [garmentId], references: [id], onDelete: Cascade)
+  customer Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([garmentId])
+  @@index([customerId])
+  @@map("photos")
+}
+
+// ============================================================================
+// PAYMENTS
+// ============================================================================
+
+enum PaymentMethod {
+  CASH
+  CARD
+  CHECK
+  MOBILE_MONEY
+}
+
+model Payment {
+  id        String         @id @default(cuid())
+  orderId   String
+  customerId String
+  userId    String?
+  amount    Float
+  method    PaymentMethod  @default(CASH)
+  notes     String?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  // Relations
+  order    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  user     User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([customerId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("payments")
+}
