@@ -34,6 +34,7 @@ interface OrderDetail {
   paidAmount: number;
   remainingAmount: number;
   customer: {
+    id: string;
     fullName: string;
     phoneNumber: string;
     email: string | null;
@@ -247,12 +248,20 @@ export default function CommandeDetailPage() {
           <div className="flex justify-between items-start mb-3">
             <div>
               <h1
-                className="text-xl font-bold"
+                className="text-xl font-bold cursor-pointer"
                 style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
+                onClick={() => router.push(`/clients/${order.customer.id}`)}
               >
                 {order.customer.fullName}
               </h1>
-              <p className="text-sm text-slate-400">{order.customer.phoneNumber}</p>
+              <p
+                className="text-xs font-medium cursor-pointer"
+                style={{ color: '#C81E6E' }}
+                onClick={() => router.push(`/clients/${order.customer.id}`)}
+              >
+                Voir l&apos;historique →
+              </p>
+              <p className="text-sm text-slate-400 mt-1">{order.customer.phoneNumber}</p>
             </div>
             <span
               className="text-xs font-semibold px-3 py-1.5 rounded-full"
