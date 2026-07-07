@@ -21,12 +21,21 @@ interface BilanData {
   prevYear: { count: number; revenue: number; remaining: number };
 }
 
+type TabKey = 'today' | 'week' | 'month' | 'year';
+
+const TABS: { key: TabKey; label: string }[] = [
+  { key: 'today', label: "Aujourd'hui" },
+  { key: 'week', label: 'Semaine' },
+  { key: 'month', label: 'Mois' },
+  { key: 'year', label: 'Année' },
+];
+
 function ChangeBadge({ value }: { value: number | null }) {
   if (value === null) return null;
   const positive = value >= 0;
   return (
     <span
-      className="text-xs font-bold px-2 py-0.5 rounded-full"
+      className="text-xs font-bold px-2.5 py-1 rounded-full"
       style={{
         background: positive ? '#DCFCE7' : '#FEE2E2',
         color: positive ? '#15803D' : '#DC2626',
@@ -37,68 +46,12 @@ function ChangeBadge({ value }: { value: number | null }) {
   );
 }
 
-function BilanRow({
-  title,
-  current,
-  previousLabel,
-  previous,
-  change,
-}: {
-  title: string;
-  current: { count: number; revenue: number; remaining: number };
-  previousLabel: string;
-  previous: { count: number; revenue: number; remaining: number };
-  change: number | null;
-}) {
-  return (
-    <div
-      className="bg-white rounded-2xl p-5"
-      style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
-    >
-      <div className="flex justify-between items-center mb-4">
-        <h3
-          className="font-semibold"
-          style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
-        >
-          {title}
-        </h3>
-        <ChangeBadge value={change} />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <p className="text-xs text-slate-400 mb-1">{title}</p>
-          <p className="text-xl font-bold" style={{ color: '#1A1A2E' }}>
-            {current.revenue.toLocaleString()} <span className="text-xs font-normal">FCFA</span>
-          </p>
-          <p className="text-xs text-slate-400 mt-1">
-            {current.count} commande{current.count > 1 ? 's' : ''}
-          </p>
-          {current.remaining > 0 && (
-            <p className="text-xs mt-1" style={{ color: '#EA580C' }}>
-              {current.remaining.toLocaleString()} FCFA restants
-            </p>
-          )}
-        </div>
-        <div style={{ borderLeft: '1px solid #F1F5F9', paddingLeft: '1rem' }}>
-          <p className="text-xs text-slate-400 mb-1">{previousLabel}</p>
-          <p className="text-xl font-bold text-slate-400">
-            {previous.revenue.toLocaleString()} <span className="text-xs font-normal">FCFA</span>
-          </p>
-          <p className="text-xs text-slate-400 mt-1">
-            {previous.count} commande{previous.count > 1 ? 's' : ''}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function BilanPage() {
   const router = useRouter();
   const [data, setData] = useState<BilanData | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<TabKey>('today');
 
   useEffect(() => {
     async function fetchBilan() {
@@ -154,7 +107,10 @@ export default function BilanPage() {
   if (error || !data) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4" style={bgStyle}>
-        <div className="bg-white rounded-2xl p-6 text-center max-w-sm" style={{ boxShadow: '0 4px 20px -6px rgba(26,26,46,0.08)' }}>
+        <div
+          className="bg-white rounded-2xl p-6 text-center max-w-sm"
+          style={{ boxShadow: '0 4px 20px -6px rgba(26,26,46,0.08)' }}
+        >
           <p className="text-red-600 mb-4 text-sm">{error}</p>
           <button
             onClick={() => router.push('/dashboard')}
@@ -167,6 +123,48 @@ export default function BilanPage() {
       </div>
     );
   }
+
+  const contentByTab: Record<
+    TabKey,
+    {
+      current: { count: number; revenue: number; remaining: number };
+      previousLabel: string;
+      previous: { count: number; revenue: number; remaining: number };
+      change: number | null;
+      currentLabel: string;
+    }
+  > = {
+    today: {
+      current: data.today,
+      currentLabel: "Aujourd'hui",
+      previousLabel: 'Hier',
+      previous: data.yesterday,
+      change: data.today.changeVsPrevious,
+    },
+    week: {
+      current: data.week,
+      currentLabel: 'Cette semaine',
+      previousLabel: 'Semaine précédente',
+      previous: data.prevWeek,
+      change: data.week.changeVsPrevious,
+    },
+    month: {
+      current: data.month,
+      currentLabel: 'Ce mois',
+      previousLabel: 'Mois précédent',
+      previous: data.prevMonth,
+      change: data.month.changeVsPrevious,
+    },
+    year: {
+      current: data.year,
+      currentLabel: 'Cette année',
+      previousLabel: 'Année précédente',
+      previous: data.prevYear,
+      change: data.year.changeVsPrevious,
+    },
+  };
+
+  const active = contentByTab[activeTab];
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={bgStyle}>
@@ -197,35 +195,68 @@ export default function BilanPage() {
           <p className="text-xs text-slate-400 italic">Comparaisons par période</p>
         </div>
 
-        <div className="space-y-4">
-          <BilanRow
-            title="Aujourd&apos;hui"
-            current={data.today}
-            previousLabel="Hier"
-            previous={data.yesterday}
-            change={data.today.changeVsPrevious}
-          />
-          <BilanRow
-            title="Cette semaine"
-            current={data.week}
-            previousLabel="Semaine précédente"
-            previous={data.prevWeek}
-            change={data.week.changeVsPrevious}
-          />
-          <BilanRow
-            title="Ce mois"
-            current={data.month}
-            previousLabel="Mois précédent"
-            previous={data.prevMonth}
-            change={data.month.changeVsPrevious}
-          />
-          <BilanRow
-            title="Cette année"
-            current={data.year}
-            previousLabel="Année précédente"
-            previous={data.prevYear}
-            change={data.year.changeVsPrevious}
-          />
+        {/* Onglets */}
+        <div
+          className="flex gap-1 mb-5 p-1 rounded-2xl bg-white"
+          style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+        >
+          {TABS.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className="flex-1 text-sm font-medium py-2.5 rounded-xl transition-all"
+              style={{
+                background: activeTab === tab.key ? '#C81E6E' : 'transparent',
+                color: activeTab === tab.key ? '#FFFFFF' : '#64748B',
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Contenu de l'onglet actif */}
+        <div
+          className="bg-white rounded-2xl p-6"
+          style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+        >
+          <div className="flex justify-between items-center mb-5">
+            <h2
+              className="font-semibold"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
+            >
+              {active.currentLabel}
+            </h2>
+            <ChangeBadge value={active.change} />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-xs text-slate-400 mb-1">{active.currentLabel}</p>
+              <p className="text-2xl font-bold" style={{ color: '#1A1A2E' }}>
+                {active.current.revenue.toLocaleString()}{' '}
+                <span className="text-xs font-normal">FCFA</span>
+              </p>
+              <p className="text-xs text-slate-400 mt-1">
+                {active.current.count} commande{active.current.count > 1 ? 's' : ''}
+              </p>
+              {active.current.remaining > 0 && (
+                <p className="text-xs mt-2 font-medium" style={{ color: '#EA580C' }}>
+                  {active.current.remaining.toLocaleString()} FCFA restants
+                </p>
+              )}
+            </div>
+            <div style={{ borderLeft: '1px solid #F1F5F9', paddingLeft: '1rem' }}>
+              <p className="text-xs text-slate-400 mb-1">{active.previousLabel}</p>
+              <p className="text-2xl font-bold text-slate-400">
+                {active.previous.revenue.toLocaleString()}{' '}
+                <span className="text-xs font-normal">FCFA</span>
+              </p>
+              <p className="text-xs text-slate-400 mt-1">
+                {active.previous.count} commande{active.previous.count > 1 ? 's' : ''}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
