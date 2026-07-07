@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import OverdueAlert from '@/app/components/OverdueAlert';
 
 interface PeriodStats {
   count: number;
@@ -209,7 +210,7 @@ export default function DashboardPage() {
 
       <div className="max-w-4xl mx-auto px-4 py-6 relative">
         {/* En-tête */}
-        <div className="flex justify-between items-center mb-8 flex-wrap gap-3">
+        <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
           <div>
             <h1
               className="text-2xl font-bold tracking-tight"
@@ -246,6 +247,8 @@ export default function DashboardPage() {
             </button>
           </div>
         </div>
+
+        <OverdueAlert />
 
         {/* Cartes statistiques */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
