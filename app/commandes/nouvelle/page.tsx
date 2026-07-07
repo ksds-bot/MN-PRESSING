@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import OverdueAlert from '@/app/components/OverdueAlert';
 
 interface GarmentForm {
   type: string;
@@ -10,10 +11,6 @@ interface GarmentForm {
   photoUrls: string[];
   uploading: boolean;
 }
-
-const inputStyle: React.CSSProperties = {
-  boxShadow: 'none',
-};
 
 function SectionCard({
   title,
@@ -285,6 +282,7 @@ export default function NouvelleCommandePage() {
 
       <div className="max-w-2xl mx-auto px-4 py-6 relative">
         <div className="mb-6">
+          <OverdueAlert />
           <h1
             className="text-2xl font-bold tracking-tight"
             style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
