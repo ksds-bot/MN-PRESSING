@@ -176,6 +176,14 @@ export default function UtilisateursPage() {
             <p className="text-xs text-slate-400 italic">Gestion des accès</p>
           </div>
           <button
+            onClick={() => router.push('/utilisateurs/connexions')}
+            className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600 mr-2"
+            style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
+          >
+            Connexions
+          </button>
+
+          <button
             onClick={() => setShowForm(!showForm)}
             className="text-sm font-medium px-4 py-2.5 rounded-xl text-white"
             style={{
