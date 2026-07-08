@@ -67,6 +67,23 @@ export default async function handler(
       role: user.role,
     });
 
+    // Enregistrer la connexion dans l'historique (ne doit jamais bloquer le login)
+    try {
+      const forwarded = req.headers['x-forwarded-for'];
+      const ipAddress = Array.isArray(forwarded)
+        ? forwarded[0]
+        : forwarded?.split(',')[0] || req.socket.remoteAddress || null;
+
+      await prisma.loginHistory.create({
+        data: {
+          userId: user.id,
+          ipAddress,
+        },
+      });
+    } catch (logError) {
+      console.error('Login history logging error:', logError);
+    }
+
     res.setHeader('Set-Cookie', [
       `refreshToken=${refreshToken}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${7 * 24 * 60 * 60}`,
     ]);
