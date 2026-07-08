@@ -70,6 +70,16 @@ function formatDate(dateStr: string) {
   });
 }
 
+function formatDateTime(dateStr: string) {
+  return new Date(dateStr).toLocaleString('fr-FR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
 export default function CommandeDetailPage() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
