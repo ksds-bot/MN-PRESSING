@@ -26,6 +26,7 @@ interface OrderDetail {
   id: string;
   receiptNumber: string;
   status: string;
+  createdAt: string;
   depositDate: string;
   expectedReturnDate: string;
   deliveryDate: string | null;
@@ -283,10 +284,11 @@ export default function CommandeDetailPage() {
               {STATUS_LABELS[order.status]}
             </span>
           </div>
-          <p className="text-xs text-slate-400">
-            Reçu n° {order.receiptNumber.slice(0, 12)} · Déposé le {formatDate(order.depositDate)} ·
-            Retrait prévu le {formatDate(order.expectedReturnDate)}
+            <p className="text-xs text-slate-400">
+            Reçu n° {order.receiptNumber.slice(0, 12)} · Enregistrée le{' '}
+            {formatDateTime(order.createdAt)} · Retrait prévu le {formatDate(order.expectedReturnDate)}
           </p>
+
           {order.observations && (
             <p className="text-sm text-slate-600 mt-2 italic">« {order.observations} »</p>
           )}
