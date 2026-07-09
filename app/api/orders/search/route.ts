@@ -33,6 +33,7 @@ export async function GET(req: NextRequest) {
         customer: true,
         garments: true,
         photos: true,
+        createdBy: { select: { id: true, name: true, email: true } },
       },
       orderBy: { createdAt: 'desc' },
       take: 50,
