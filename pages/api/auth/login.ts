@@ -67,6 +67,21 @@ export default async function handler(
       role: user.role,
     });
 
+    // Enregistrer cette connexion dans l'historique
+    const forwarded = req.headers['x-forwarded-for'];
+    const ipAddress = Array.isArray(forwarded)
+      ? forwarded[0]
+      : forwarded?.split(',')[0] || req.socket.remoteAddress || null;
+    const userAgent = req.headers['user-agent'] || null;
+
+    await prisma.loginHistory.create({
+      data: {
+        userId: user.id,
+        ipAddress: ipAddress || undefined,
+        userAgent: userAgent || undefined,
+      },
+    });
+
     res.setHeader('Set-Cookie', [
       `refreshToken=${refreshToken}; HttpOnly; Secure; SameSite=Strict; Path=/; Max-Age=${7 * 24 * 60 * 60}`,
     ]);
