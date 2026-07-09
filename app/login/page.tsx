@@ -36,7 +36,7 @@ export default function LoginPage() {
       if (data.user.role === 'ADMIN') {
         router.push('/dashboard');
       } else {
-        router.push('/commandes/nouvelle');
+        router.push('/tableau-employe');
       }
     } catch (err) {
       setError('Erreur serveur, réessayez.');
