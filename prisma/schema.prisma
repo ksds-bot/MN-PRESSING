@@ -37,6 +37,24 @@ model User {
 }
 
 // ============================================================================
+// LOGIN HISTORY
+// ============================================================================
+
+model LoginHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  loginAt   DateTime @default(now())
+  ipAddress String?
+  userAgent String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([loginAt])
+  @@map("login_history")
+}
+
+// ============================================================================
 // CUSTOMERS
 // ============================================================================
 
@@ -177,21 +195,4 @@ model Payment {
   @@index([userId])
   @@index([createdAt])
   @@map("payments")
-}
-
-// ============================================================================
-// LOGIN HISTORY
-// ============================================================================
-
-model LoginHistory {
-  id        String   @id @default(cuid())
-  userId    String
-  loginAt   DateTime @default(now())
-  ipAddress String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([loginAt])
-  @@map("login_history")
 }
