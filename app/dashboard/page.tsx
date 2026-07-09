@@ -130,7 +130,7 @@ export default function DashboardPage() {
 
       const user = JSON.parse(userStr);
       if (user.role !== 'ADMIN') {
-        router.push('/commandes/nouvelle');
+        router.push('/tableau-employe');
         return;
       }
 
@@ -238,6 +238,15 @@ export default function DashboardPage() {
             >
               Bilan
             </button>
+            
+           <button
+             onClick={() => router.push('/export')}
+             className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600"
+             style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
+             >
+             Export
+           </button>
+
             <button
               onClick={() => router.push('/commandes')}
               className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600"
