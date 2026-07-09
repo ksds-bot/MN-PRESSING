@@ -17,6 +17,7 @@ interface Order {
     phoneNumber: string;
   };
   garments: { id: string; type: string }[];
+  createdBy: { id: string; name: string; email: string } | null;
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -216,6 +217,9 @@ export default function CommandesPage() {
                       : 'Soldé'}
                   </span>
                 </div>
+                <p className="text-xs text-slate-400 mt-1 italic">
+                  Enregistré par {order.createdBy?.name || 'Inconnu'}
+                </p>
               </button>
             ))}
           </div>
