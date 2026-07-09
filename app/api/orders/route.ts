@@ -73,10 +73,10 @@ export async function POST(req: NextRequest) {
       include: {
         garments: true,
         customer: true,
+        createdBy: { select: { id: true, name: true, email: true } },
       },
     });
 
-    // Associer les photos si fournies (une entrée Photo par URL, liée à la commande)
     const allPhotoUrls: { url: string; fileName: string }[] = [];
     garments.forEach((g) => {
       (g.photoUrls || []).forEach((url) => {
@@ -95,7 +95,6 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Si un paiement initial a été versé, on l'enregistre
     if (paidAmount && paidAmount > 0) {
       await prisma.payment.create({
         data: {
@@ -129,6 +128,7 @@ export async function GET(req: NextRequest) {
         customer: true,
         garments: true,
         photos: true,
+        createdBy: { select: { id: true, name: true, email: true } },
       },
       orderBy: { createdAt: 'desc' },
       take: 100,
