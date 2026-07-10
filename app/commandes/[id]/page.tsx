@@ -284,10 +284,22 @@ export default function CommandeDetailPage() {
               {STATUS_LABELS[order.status]}
             </span>
           </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400"
             Reçu n° {order.receiptNumber.slice(0, 12)} · Enregistrée le{' '}
             {formatDateTime(order.createdAt)} · Retrait prévu le {formatDate(order.expectedReturnDate)}
           </p>
+
+          <button
+            onClick={() => {
+              const link = `${window.location.origin}/suivi/${order.receiptNumber}`;
+              navigator.clipboard.writeText(link);
+              alert('Lien de suivi copié ! Vous pouvez le transmettre au client.');
+            }}
+            className="text-xs font-medium mt-2 px-3 py-1.5 rounded-lg inline-flex items-center gap-1"
+            style={{ background: '#E0F2FE', color: '#0369A1' }}
+          >
+            Copier le lien de suivi client
+          </button>
 
           {order.observations && (
             <p className="text-sm text-slate-600 mt-2 italic">« {order.observations} »</p>
