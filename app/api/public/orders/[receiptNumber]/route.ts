@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-// GET /api/public/orders/[receiptNumber] -> suivi client, sans authentification
-// N'expose que les informations utiles au client : statut, vêtements, observations, paiement.
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ receiptNumber: string }> }
