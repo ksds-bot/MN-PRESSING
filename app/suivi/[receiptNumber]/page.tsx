@@ -41,8 +41,8 @@ function formatDate(d: string | null) {
 }
 
 export default function SuiviCommandePage() {
-  const params = useParams();
-  const receiptNumber = params.receiptNumber as string;
+  const params = useParams<{ receiptNumber: string }>();
+  const receiptNumber = params?.receiptNumber ?? '';
 
   const [order, setOrder] = useState<PublicOrder | null>(null);
   const [loading, setLoading] = useState(true);
@@ -70,6 +70,9 @@ export default function SuiviCommandePage() {
 
     if (receiptNumber) {
       fetchOrder();
+    } else {
+      setError('Commande introuvable');
+      setLoading(false);
     }
   }, [receiptNumber]);
 
