@@ -284,7 +284,7 @@ export default function CommandeDetailPage() {
               {STATUS_LABELS[order.status]}
             </span>
           </div>
-            <p className="text-xs text-slate-400"
+             <p className="text-xs text-slate-400">
             Reçu n° {order.receiptNumber.slice(0, 12)} · Enregistrée le{' '}
             {formatDateTime(order.createdAt)} · Retrait prévu le {formatDate(order.expectedReturnDate)}
           </p>
