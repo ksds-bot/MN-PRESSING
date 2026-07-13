@@ -22,6 +22,13 @@ interface Payment {
   createdAt: string;
 }
 
+interface Incident {
+  id: string;
+  message: string;
+  createdAt: string;
+  reportedBy: { id: string; name: string } | null;
+}
+
 interface OrderDetail {
   id: string;
   receiptNumber: string;
@@ -93,6 +100,10 @@ export default function CommandeDetailPage() {
   const [paymentAmount, setPaymentAmount] = useState('');
   const [showPaymentInput, setShowPaymentInput] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [incidents, setIncidents] = useState<Incident[]>([]);
+  const [incidentMessage, setIncidentMessage] = useState('');
+  const [showIncidentInput, setShowIncidentInput] = useState(false);
+  const [postingIncident, setPostingIncident] = useState(false);
 
   const fetchOrder = useCallback(async () => {
     const token = localStorage.getItem('accessToken');
@@ -119,6 +130,14 @@ export default function CommandeDetailPage() {
 
       setOrder(data.order);
       setLoading(false);
+
+      const incidentsRes = await fetch(`/api/orders/${orderId}/incidents`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const incidentsData = await incidentsRes.json();
+      if (incidentsData.success) {
+        setIncidents(incidentsData.incidents);
+      }
     } catch (err) {
       setError('Erreur serveur');
       setLoading(false);
@@ -130,6 +149,59 @@ export default function CommandeDetailPage() {
       fetchOrder();
     }
   }, [orderId, fetchOrder]);
+
+  async function addIncident() {
+    const message = incidentMessage.trim();
+    if (!message) return;
+
+    setPostingIncident(true);
+    const token = localStorage.getItem('accessToken');
+
+    try {
+      const res = await fetch(`/api/orders/${orderId}/incidents`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ message }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setIncidents((prev) => [data.incident, ...prev]);
+        setIncidentMessage('');
+        setShowIncidentInput(false);
+      } else {
+        alert(data.error || "Erreur lors de l'ajout de l'incident");
+      }
+    } catch (err) {
+      alert('Erreur serveur');
+    } finally {
+      setPostingIncident(false);
+    }
+  }
+
+  async function deleteIncident(incidentId: string) {
+    if (!confirm('Supprimer cette observation ?')) return;
+    const token = localStorage.getItem('accessToken');
+
+    try {
+      const res = await fetch(`/api/orders/${orderId}/incidents?incidentId=${incidentId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setIncidents((prev) => prev.filter((i) => i.id !== incidentId));
+      } else {
+        alert(data.error || 'Erreur lors de la suppression');
+      }
+    } catch (err) {
+      alert('Erreur serveur');
+    }
+  }
 
   async function updateStatus(newStatus: string) {
     setUpdating(true);
@@ -380,6 +452,89 @@ export default function CommandeDetailPage() {
                 />
               ))}
             </div>
+          )}
+        </div>
+
+        {/* Incidents / observations visibles par le client */}
+        <div
+          className="bg-white rounded-2xl p-5 mb-4"
+          style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Observations client (visibles sur le lien de suivi)
+            </h2>
+          </div>
+
+          {incidents.length > 0 && (
+            <div className="space-y-2 mb-3">
+              {incidents.map((inc) => (
+                <div
+                  key={inc.id}
+                  className="rounded-xl p-3 flex justify-between items-start gap-2"
+                  style={{ background: '#FFF7ED', border: '1px solid #FED7AA' }}
+                >
+                  <div>
+                    <p className="text-sm" style={{ color: '#92400E' }}>
+                      {inc.message}
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      {formatDateTime(inc.createdAt)}
+                      {inc.reportedBy ? ` · ${inc.reportedBy.name}` : ''}
+                    </p>
+                  </div>
+                  {isAdmin && (
+                    <button
+                      onClick={() => deleteIncident(inc.id)}
+                      className="text-xs text-slate-400 hover:text-red-500 shrink-0"
+                    >
+                      Supprimer
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {showIncidentInput ? (
+            <div className="space-y-2">
+              <textarea
+                placeholder="Ex : Panne de la machine à laver, retard prévu de 24h..."
+                value={incidentMessage}
+                onChange={(e) => setIncidentMessage(e.target.value)}
+                maxLength={500}
+                rows={3}
+                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none resize-none"
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={addIncident}
+                  disabled={postingIncident || !incidentMessage.trim()}
+                  className="text-sm font-medium px-4 py-2 rounded-xl text-white disabled:opacity-50"
+                  style={{ background: '#C81E6E' }}
+                >
+                  Publier
+                </button>
+                <button
+                  onClick={() => {
+                    setShowIncidentInput(false);
+                    setIncidentMessage('');
+                  }}
+                  className="text-sm font-medium px-4 py-2 rounded-xl text-slate-500"
+                  style={{ background: '#F1F5F9' }}
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowIncidentInput(true)}
+              className="w-full text-sm font-medium py-2.5 rounded-xl"
+              style={{ background: '#FFF7ED', color: '#B45309' }}
+            >
+              + Signaler un incident / une observation
+            </button>
           )}
         </div>
 
