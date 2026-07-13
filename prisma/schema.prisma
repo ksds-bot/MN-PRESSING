@@ -110,12 +110,33 @@ model Order {
   garments Garment[]
   photos   Photo[]
   payments Payment[]
+  incidents OrderIncident[]
 
   @@index([customerId])
   @@index([createdById])
   @@index([status])
   @@index([createdAt])
   @@map("orders")
+}
+
+// ============================================================================
+// ORDER INCIDENTS (observations horodatées visibles par le client)
+// ============================================================================
+
+model OrderIncident {
+  id           String   @id @default(cuid())
+  orderId      String
+  message      String
+  reportedById String?
+  createdAt    DateTime @default(now())
+
+  // Relations
+  order      Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  reportedBy User? @relation(fields: [reportedById], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([createdAt])
+  @@map("order_incidents")
 }
 
 // ============================================================================
