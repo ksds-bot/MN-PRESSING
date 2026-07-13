@@ -2,7 +2,160 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --rose: #C81E6E;
+  --rose-dark: #A0164F;
+  --sky: #87CEEB;
+  --sky-dark: #3AA0D6;
+  --ink: #1A1A2E;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(200, 30, 110, 0.35) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--rose), var(--sky));
+  border-radius: 999px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #FAFBFF;
+  color: var(--ink);
+}
+
+/* ---------- Page transition wrapper ---------- */
+.page-enter {
+  animation: pageEnter 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes pageEnter {
+  0% { opacity: 0; transform: translateY(14px) scale(0.99); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---------- Glass card ---------- */
+.glass-card {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* ---------- Premium gradient text ---------- */
+.text-gradient-pressing {
+  background: linear-gradient(120deg, var(--rose) 0%, #E8578F 45%, var(--sky-dark) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- Shimmer button sheen ---------- */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.5) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
+}
+
+/* ---------- Ambient pressing background (bulles + vapeur + halos) ---------- */
+.pressing-ambient {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.pressing-ambient .halo {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(60px);
+}
+
+.pressing-ambient .bubble {
+  position: absolute;
+  bottom: -20px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(135,206,235,0.25));
+  border: 1px solid rgba(255,255,255,0.5);
+  animation: bubble-rise linear infinite;
+}
+
+.pressing-ambient .steam {
+  position: absolute;
+  bottom: 10%;
+  width: 40px;
+  height: 60px;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.55), transparent 70%);
+  border-radius: 50%;
+  filter: blur(6px);
+  animation: steam-rise ease-out infinite;
+}
+
+/* ---------- Washing machine icon (pure CSS) ---------- */
+.washing-machine {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+.washing-machine .drum {
+  position: absolute;
+  inset: 14px;
+  border-radius: 50%;
+  border: 6px solid rgba(200, 30, 110, 0.18);
+  border-top-color: rgba(200, 30, 110, 0.55);
+  border-right-color: rgba(135, 206, 235, 0.6);
+}
+.washing-machine .clothes {
+  position: absolute;
+  inset: 28px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #C81E6E, #87CEEB, #F9A8D4, #C81E6E);
+  opacity: 0.35;
+}
+
+/* ---------- Floating fabric shapes ---------- */
+.fabric-shape {
+  position: absolute;
+  border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%;
+  opacity: 0.15;
+}
+
+/* ---------- Focus ring premium ---------- */
+.input-premium {
+  transition: box-shadow 0.25s ease, background-color 0.25s ease, border-color 0.25s ease;
+}
+.input-premium:focus {
+  box-shadow: 0 0 0 3px rgba(200, 30, 110, 0.15);
+  border-color: var(--rose);
+  background-color: #ffffff;
+}
+
+/* ---------- Reduced motion respect ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
