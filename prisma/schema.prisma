@@ -32,6 +32,7 @@ model User {
   orders    Order[]
   payments  Payment[]
   loginHistory LoginHistory[]
+  reportedIncidents OrderIncident[]
 
   @@map("users")
 }
