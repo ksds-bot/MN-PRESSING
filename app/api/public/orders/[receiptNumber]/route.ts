@@ -39,6 +39,14 @@ export async function GET(
             description: true,
           },
         },
+        incidents: {
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            message: true,
+            createdAt: true,
+          },
+        },
       },
     });
 
