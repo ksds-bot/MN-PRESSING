@@ -222,7 +222,7 @@ export default function DashboardPage() {
           </div>
           <div className="flex gap-2 flex-wrap">
 
-          <button
+           <button
               onClick={() => router.push('/utilisateurs')}
               className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600"
               style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
@@ -230,7 +230,14 @@ export default function DashboardPage() {
               Utilisateurs
             </button>
 
-            
+            <button
+              onClick={() => router.push('/documentation')}
+              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600"
+              style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
+            >
+              Documentation
+            </button>
+
            <button
               onClick={() => router.push('/bilan')}
               className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600"
