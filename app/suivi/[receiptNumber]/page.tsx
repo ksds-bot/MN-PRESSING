@@ -15,6 +15,7 @@ interface PublicOrder {
   remainingAmount: number;
   customer: { fullName: string };
   garments: { id: string; type: string; description: string }[];
+  incidents: { id: string; message: string; createdAt: string }[];
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -38,6 +39,16 @@ const STATUS_DESCRIPTIONS: Record<string, string> = {
 function formatDate(d: string | null) {
   if (!d) return '—';
   return new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' });
+}
+
+function formatDateTime(d: string) {
+  return new Date(d).toLocaleString('fr-FR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 }
 
 export default function SuiviCommandePage() {
@@ -220,17 +231,35 @@ export default function SuiviCommandePage() {
           )}
         </div>
 
-        {order.observations && (
+        {(order.incidents.length > 0 || order.observations) && (
           <div
             className="rounded-2xl p-5 mb-5"
             style={{ background: '#FFF7ED', border: '1px solid #FED7AA' }}
           >
-            <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: '#B45309' }}>
+            <p className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ color: '#B45309' }}>
               Informations importantes
             </p>
-            <p className="text-sm" style={{ color: '#92400E' }}>
-              {order.observations}
-            </p>
+            <div className="space-y-3">
+              {order.observations && (
+                <p className="text-sm" style={{ color: '#92400E' }}>
+                  {order.observations}
+                </p>
+              )}
+              {order.incidents.map((inc, idx) => (
+                <div
+                  key={inc.id}
+                  className={idx < order.incidents.length - 1 ? 'pb-3' : ''}
+                  style={idx < order.incidents.length - 1 ? { borderBottom: '1px solid #FED7AA' } : undefined}
+                >
+                  <p className="text-sm" style={{ color: '#92400E' }}>
+                    {inc.message}
+                  </p>
+                  <p className="text-[11px] mt-1" style={{ color: '#B45309', opacity: 0.75 }}>
+                    {formatDateTime(inc.createdAt)}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
