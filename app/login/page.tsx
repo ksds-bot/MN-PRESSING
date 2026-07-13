@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import PressingBackground from '../components/PressingBackground';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -51,25 +52,27 @@ export default function LoginPage() {
         background: 'linear-gradient(160deg, #FDF2F8 0%, #FFFFFF 45%, #E0F2FE 100%)',
       }}
     >
-      {/* Ornements en fond, discrets */}
-      <div
-        className="absolute -top-20 -left-20 w-72 h-72 rounded-full opacity-30 blur-3xl"
-        style={{ background: '#C81E6E' }}
-      />
-      <div
-        className="absolute -bottom-24 -right-16 w-80 h-80 rounded-full opacity-25 blur-3xl"
-        style={{ background: '#87CEEB' }}
-      />
+      <PressingBackground />
 
-      <div className="w-full max-w-sm relative">
+      <div className="w-full max-w-sm relative z-10 animate-fade-up">
+        {/* Logo / icône pressing animée */}
+        <div className="flex justify-center mb-6">
+          <div className="relative w-16 h-16">
+            <div
+              className="absolute inset-0 rounded-full animate-spin-slow"
+              style={{
+                background: 'conic-gradient(from 0deg, #C81E6E, #87CEEB, #F9A8D4, #C81E6E)',
+                opacity: 0.9,
+              }}
+            />
+            <div className="absolute inset-1.5 rounded-full bg-white flex items-center justify-center shadow-inner">
+              <span className="text-2xl">✨</span>
+            </div>
+          </div>
+        </div>
+
         {/* Carte principale */}
-        <div
-          className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 relative"
-          style={{
-            boxShadow:
-              '0 20px 60px -15px rgba(200, 30, 110, 0.25), 0 8px 24px -8px rgba(26, 26, 46, 0.15)',
-          }}
-        >
+        <div className="glass-card rounded-3xl p-8 relative shadow-premium animate-scale-in">
           {/* Liseré décoratif en haut */}
           <div
             className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-1.5 rounded-full"
@@ -78,13 +81,10 @@ export default function LoginPage() {
 
           <div className="text-center mb-8">
             <h1
-              className="text-3xl font-bold mb-1 tracking-tight"
-              style={{
-                fontFamily: "'Playfair Display', Georgia, serif",
-                color: '#1A1A2E',
-              }}
+              className="text-3xl font-bold mb-1 tracking-tight font-display"
+              style={{ color: '#1A1A2E' }}
             >
-              MN <span style={{ color: '#C81E6E' }}>Pressing</span>
+              MN <span className="text-gradient-pressing">Pressing</span>
             </h1>
             <p className="text-xs italic text-slate-400 tracking-wide">
               L&apos;élégance commence par un linge parfait
@@ -101,10 +101,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:outline-none focus:ring-2 focus:bg-white transition-all"
-                style={{ outlineColor: '#C81E6E' }}
-                onFocus={(e) => (e.target.style.boxShadow = '0 0 0 3px rgba(200, 30, 110, 0.15)')}
-                onBlur={(e) => (e.target.style.boxShadow = 'none')}
+                className="input-premium w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:outline-none"
                 placeholder="vous@exemple.com"
               />
             </div>
@@ -118,15 +115,13 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:outline-none focus:bg-white transition-all"
-                onFocus={(e) => (e.target.style.boxShadow = '0 0 0 3px rgba(200, 30, 110, 0.15)')}
-                onBlur={(e) => (e.target.style.boxShadow = 'none')}
+                className="input-premium w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:outline-none"
                 placeholder="••••••••"
               />
             </div>
 
             {error && (
-              <p className="text-sm bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-2.5">
+              <p className="text-sm bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-2.5 animate-fade-in">
                 {error}
               </p>
             )}
@@ -134,15 +129,29 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full text-white font-semibold py-3.5 rounded-xl transition-all disabled:opacity-50 mt-2"
+              className="btn-shimmer w-full text-white font-semibold py-3.5 rounded-xl transition-all duration-300 disabled:opacity-50 mt-2 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0"
               style={{
                 background: 'linear-gradient(135deg, #C81E6E 0%, #A0164F 100%)',
                 boxShadow: '0 8px 20px -6px rgba(200, 30, 110, 0.5)',
               }}
             >
-              {loading ? 'Connexion...' : 'Se connecter'}
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                  Connexion...
+                </span>
+              ) : (
+                'Se connecter'
+              )}
             </button>
           </form>
+
+          <p className="text-center text-xs text-slate-400 mt-5">
+            Pas encore de compte ?{' '}
+            <a href="/register" className="text-pressing-rose font-semibold hover:underline">
+              Créer un compte
+            </a>
+          </p>
         </div>
 
         <p className="text-center text-xs text-slate-400 mt-6">
