@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import OverdueAlert from '@/app/components/OverdueAlert';
+import PressingBackground from '@/app/components/PressingBackground';
 
 interface Order {
   id: string;
@@ -123,20 +124,28 @@ export default function TableauEmployePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={bgStyle}>
-        <p className="text-slate-400 text-sm">Chargement...</p>
+      <div className="min-h-screen flex items-center justify-center relative overflow-hidden" style={bgStyle}>
+        <PressingBackground />
+        <div className="relative z-10 flex flex-col items-center gap-4">
+          <div className="washing-machine animate-spin-slow">
+            <div className="drum" />
+            <div className="clothes animate-spin-slower" />
+          </div>
+          <p className="text-slate-400 text-sm">Chargement...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4" style={bgStyle}>
-        <div className="bg-white rounded-2xl shadow-lg p-6 text-center max-w-sm">
+      <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden" style={bgStyle}>
+        <PressingBackground />
+        <div className="glass-card rounded-2xl shadow-premium p-6 text-center max-w-sm relative z-10 animate-scale-in">
           <p className="text-red-600 mb-4 text-sm">{error}</p>
           <button
             onClick={() => router.push('/login')}
-            className="text-white px-5 py-2.5 rounded-xl font-medium text-sm"
+            className="text-white px-5 py-2.5 rounded-xl font-medium text-sm transition-transform hover:-translate-y-0.5"
             style={{ background: '#C81E6E' }}
           >
             Retour à la connexion
@@ -148,46 +157,36 @@ export default function TableauEmployePage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={bgStyle}>
-      <div
-        className="absolute -top-20 -left-20 w-72 h-72 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#C81E6E' }}
-      />
-      <div
-        className="absolute top-40 -right-16 w-80 h-80 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#87CEEB' }}
-      />
+      <PressingBackground />
 
-      <div className="max-w-4xl mx-auto px-4 py-6 relative">
-        <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
+      <div className="max-w-4xl mx-auto px-4 py-6 relative z-10">
+        <div className="flex justify-between items-center mb-6 flex-wrap gap-3 animate-fade-up">
           <div>
-            <h1
-              className="text-2xl font-bold tracking-tight"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
-            >
-              MN <span style={{ color: '#C81E6E' }}>Pressing</span>
+            <h1 className="text-2xl font-bold tracking-tight font-display" style={{ color: '#1A1A2E' }}>
+              MN <span className="text-gradient-pressing">Pressing</span>
             </h1>
             <p className="text-xs text-slate-400 italic">
               {userName ? `Bonjour ${userName}` : 'Mon espace'}
             </p>
           </div>
           <div className="flex gap-2 flex-wrap">
-          <button
+            <button
               onClick={() => router.push('/commandes')}
-              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600"
+              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600 transition-all hover:-translate-y-0.5 hover:shadow-md"
               style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
             >
               Mes commandes
             </button>
             <button
               onClick={() => router.push('/documentation')}
-              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600"
+              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600 transition-all hover:-translate-y-0.5 hover:shadow-md"
               style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
             >
               Documentation
             </button>
             <button
               onClick={() => router.push('/commandes/nouvelle')}
-              className="text-sm font-medium px-4 py-2.5 rounded-xl text-white"
+              className="btn-shimmer text-sm font-medium px-4 py-2.5 rounded-xl text-white transition-all hover:-translate-y-0.5"
               style={{
                 background: 'linear-gradient(135deg, #C81E6E 0%, #A0164F 100%)',
                 boxShadow: '0 8px 20px -8px rgba(200, 30, 110, 0.5)',
@@ -197,7 +196,7 @@ export default function TableauEmployePage() {
             </button>
             <button
               onClick={handleLogout}
-              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600"
+              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600 transition-all hover:-translate-y-0.5 hover:shadow-md"
               style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
             >
               Déconnexion
@@ -209,62 +208,75 @@ export default function TableauEmployePage() {
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div
-            className="rounded-2xl p-5"
+            className="rounded-2xl p-5 relative overflow-hidden animate-fade-up"
             style={{
               background: 'linear-gradient(135deg, #C81E6E 0%, #A0164F 100%)',
               boxShadow: '0 12px 28px -8px rgba(200, 30, 110, 0.45)',
             }}
           >
-            <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: 'rgba(255,255,255,0.75)' }}>
+            <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-white/10 animate-pulse-glow" />
+            <p className="text-xs font-semibold uppercase tracking-wide mb-2 relative" style={{ color: 'rgba(255,255,255,0.75)' }}>
               Aujourd&apos;hui
             </p>
-            <p className="text-3xl font-bold mb-0.5 text-white" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+            <p className="text-3xl font-bold mb-0.5 text-white font-display relative">
               {stats.todayCount}
             </p>
-            <p className="text-xs mb-3" style={{ color: 'rgba(255,255,255,0.65)' }}>
+            <p className="text-xs mb-3 relative" style={{ color: 'rgba(255,255,255,0.65)' }}>
               commande{stats.todayCount > 1 ? 's' : ''} créée{stats.todayCount > 1 ? 's' : ''}
             </p>
-            <p className="text-lg font-semibold text-white">
+            <p className="text-lg font-semibold text-white relative">
               {stats.todayRevenue.toLocaleString()} <span className="text-xs font-normal">FCFA</span>
             </p>
           </div>
 
-          <div className="rounded-2xl p-5 bg-white" style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}>
+          <div
+            className="rounded-2xl p-5 bg-white animate-fade-up transition-transform hover:-translate-y-1"
+            style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)', animationDelay: '60ms' }}
+          >
             <p className="text-xs font-semibold uppercase tracking-wide mb-2 text-slate-400">En cours</p>
-            <p className="text-3xl font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}>
+            <p className="text-3xl font-bold font-display" style={{ color: '#1A1A2E' }}>
               {stats.pendingCount}
             </p>
             <p className="text-xs text-slate-400 mt-1">non livrées</p>
           </div>
 
-          <div className="rounded-2xl p-5 bg-white" style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}>
+          <div
+            className="rounded-2xl p-5 bg-white animate-fade-up transition-transform hover:-translate-y-1"
+            style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)', animationDelay: '120ms' }}
+          >
             <p className="text-xs font-semibold uppercase tracking-wide mb-2 text-slate-400">Prêtes</p>
-            <p className="text-3xl font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#C81E6E' }}>
+            <p className="text-3xl font-bold font-display" style={{ color: '#C81E6E' }}>
               {stats.readyCount}
             </p>
             <p className="text-xs text-slate-400 mt-1">à récupérer</p>
           </div>
 
-          <div className="rounded-2xl p-5 bg-white" style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}>
+          <div
+            className="rounded-2xl p-5 bg-white animate-fade-up transition-transform hover:-translate-y-1"
+            style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)', animationDelay: '180ms' }}
+          >
             <p className="text-xs font-semibold uppercase tracking-wide mb-2 text-slate-400">Restant dû</p>
-            <p className="text-2xl font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#EA580C' }}>
+            <p className="text-2xl font-bold font-display" style={{ color: '#EA580C' }}>
               {stats.remainingTotal.toLocaleString()}
             </p>
             <p className="text-xs text-slate-400 mt-1">FCFA sur mes commandes</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6" style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}>
+        <div
+          className="glass-card rounded-2xl p-6 shadow-premium-sm animate-fade-up"
+          style={{ animationDelay: '240ms' }}
+        >
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2">
               <div className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, #C81E6E, #87CEEB)' }} />
-              <h2 className="font-semibold" style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}>
+              <h2 className="font-semibold font-display" style={{ color: '#1A1A2E' }}>
                 Mes commandes récentes
               </h2>
             </div>
             <button
               onClick={() => router.push('/commandes')}
-              className="text-xs font-medium"
+              className="text-xs font-medium hover:underline"
               style={{ color: '#C81E6E' }}
             >
               Voir tout →
@@ -281,7 +293,7 @@ export default function TableauEmployePage() {
                   <div
                     key={o.id}
                     onClick={() => router.push(`/commandes/${o.id}`)}
-                    className="flex items-center justify-between px-3 py-3 rounded-xl hover:bg-slate-50 cursor-pointer border border-slate-50"
+                    className="flex items-center justify-between px-3 py-3 rounded-xl hover:bg-slate-50 cursor-pointer border border-slate-50 transition-all hover:shadow-sm hover:-translate-y-0.5"
                   >
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-slate-700 truncate">{o.customer.fullName}</p>
