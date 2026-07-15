@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import PressingBackground from '@/app/components/PressingBackground';
 
 interface UserItem {
   id: string;
@@ -13,16 +14,7 @@ interface UserItem {
 }
 
 const fieldClasses =
-  'w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:outline-none focus:bg-white transition-all text-sm';
-
-function focusPink(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) {
-  e.target.style.boxShadow = '0 0 0 3px rgba(200, 30, 110, 0.15)';
-  e.target.style.borderColor = '#C81E6E';
-}
-function blurPink(e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) {
-  e.target.style.boxShadow = 'none';
-  e.target.style.borderColor = '';
-}
+  'input-premium w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:outline-none focus:bg-white text-sm';
 
 export default function UtilisateursPage() {
   const router = useRouter();
@@ -148,62 +140,50 @@ export default function UtilisateursPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={bgStyle}>
-      <div
-        className="absolute -top-20 -left-20 w-72 h-72 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#C81E6E' }}
-      />
-      <div
-        className="absolute top-40 -right-16 w-80 h-80 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#87CEEB' }}
-      />
+      <PressingBackground />
 
-      <div className="max-w-2xl mx-auto px-4 py-6 relative">
+      <div className="max-w-2xl mx-auto px-4 py-6 relative z-10">
         <button
           onClick={() => router.push('/dashboard')}
-          className="text-sm text-slate-500 mb-4 flex items-center gap-1"
+          className="text-sm text-slate-500 mb-4 flex items-center gap-1 hover:text-slate-700 transition-colors animate-fade-up"
         >
           ← Tableau de bord
         </button>
 
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-6 flex-wrap gap-2 animate-fade-up" style={{ animationDelay: '40ms' }}>
           <div>
-            <h1
-              className="text-2xl font-bold tracking-tight"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
-            >
+            <h1 className="text-2xl font-bold tracking-tight font-display" style={{ color: '#1A1A2E' }}>
               Utilisateurs
             </h1>
             <p className="text-xs text-slate-400 italic">Gestion des accès</p>
           </div>
-          <button
-            onClick={() => router.push('/utilisateurs/connexions')}
-            className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600 mr-2"
-            style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
-          >
-            Connexions
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => router.push('/utilisateurs/connexions')}
+              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600 transition-all hover:-translate-y-0.5 hover:shadow-md"
+              style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
+            >
+              Connexions
+            </button>
 
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="text-sm font-medium px-4 py-2.5 rounded-xl text-white"
-            style={{
-              background: 'linear-gradient(135deg, #C81E6E 0%, #A0164F 100%)',
-              boxShadow: '0 8px 20px -8px rgba(200, 30, 110, 0.5)',
-            }}
-          >
-            {showForm ? 'Annuler' : '+ Utilisateur'}
-          </button>
+            <button
+              onClick={() => setShowForm(!showForm)}
+              className="btn-shimmer text-sm font-medium px-4 py-2.5 rounded-xl text-white transition-all hover:-translate-y-0.5"
+              style={{
+                background: 'linear-gradient(135deg, #C81E6E 0%, #A0164F 100%)',
+                boxShadow: '0 8px 20px -8px rgba(200, 30, 110, 0.5)',
+              }}
+            >
+              {showForm ? 'Annuler' : '+ Utilisateur'}
+            </button>
+          </div>
         </div>
 
         {showForm && (
           <div
-            className="bg-white rounded-2xl p-5 mb-5"
-            style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+            className="glass-card rounded-2xl p-5 mb-5 shadow-premium-sm animate-scale-in"
           >
-            <h2
-              className="font-semibold mb-4"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
-            >
+            <h2 className="font-semibold mb-4 font-display" style={{ color: '#1A1A2E' }}>
               Nouveau compte
             </h2>
             <form onSubmit={handleCreateUser} className="space-y-3">
@@ -213,8 +193,6 @@ export default function UtilisateursPage() {
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                onFocus={focusPink}
-                onBlur={blurPink}
                 className={fieldClasses}
               />
               <input
@@ -223,8 +201,6 @@ export default function UtilisateursPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                onFocus={focusPink}
-                onBlur={blurPink}
                 className={fieldClasses}
               />
               <input
@@ -233,8 +209,6 @@ export default function UtilisateursPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onFocus={focusPink}
-                onBlur={blurPink}
                 className={fieldClasses}
               />
               <input
@@ -243,15 +217,11 @@ export default function UtilisateursPage() {
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                onFocus={focusPink}
-                onBlur={blurPink}
                 className={fieldClasses}
               />
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value as 'EMPLOYEE' | 'ADMIN')}
-                onFocus={focusPink}
-                onBlur={blurPink}
                 className={fieldClasses}
               >
                 <option value="EMPLOYEE">Employé</option>
@@ -259,7 +229,7 @@ export default function UtilisateursPage() {
               </select>
 
               {formError && (
-                <p className="text-sm bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-2.5">
+                <p className="text-sm bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-2.5 animate-fade-in">
                   {formError}
                 </p>
               )}
@@ -267,7 +237,7 @@ export default function UtilisateursPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full text-white font-semibold py-3 rounded-xl disabled:opacity-50"
+                className="w-full text-white font-semibold py-3 rounded-xl disabled:opacity-50 transition-transform hover:-translate-y-0.5"
                 style={{ background: '#C81E6E' }}
               >
                 {submitting ? 'Création...' : 'Créer le compte'}
@@ -277,16 +247,22 @@ export default function UtilisateursPage() {
         )}
 
         {loading ? (
-          <p className="text-center text-slate-400 text-sm py-8">Chargement...</p>
+          <div className="flex flex-col items-center gap-3 py-10">
+            <div className="washing-machine animate-spin-slow" style={{ width: 60, height: 60 }}>
+              <div className="drum" />
+              <div className="clothes animate-spin-slower" />
+            </div>
+            <p className="text-center text-slate-400 text-sm">Chargement...</p>
+          </div>
         ) : error ? (
           <p className="text-center text-red-500 text-sm py-8">{error}</p>
         ) : (
           <div className="space-y-3">
-            {users.map((u) => (
+            {users.map((u, i) => (
               <div
                 key={u.id}
-                className="bg-white rounded-2xl p-4 flex justify-between items-center"
-                style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+                className="bg-white rounded-2xl p-4 flex justify-between items-center transition-all hover:-translate-y-0.5 hover:shadow-md animate-fade-up"
+                style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)', animationDelay: `${Math.min(i * 40, 400)}ms` }}
               >
                 <div>
                   <p className="font-semibold text-sm" style={{ color: '#1A1A2E' }}>
@@ -310,7 +286,7 @@ export default function UtilisateursPage() {
                   </span>
                   <button
                     onClick={() => handleDelete(u.id, u.name)}
-                    className="text-xs font-medium px-2 py-1"
+                    className="text-xs font-medium px-2 py-1 hover:underline"
                     style={{ color: '#EF4444' }}
                   >
                     Supprimer
