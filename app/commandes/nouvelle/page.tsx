@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import OverdueAlert from '@/app/components/OverdueAlert';
+import PressingBackground from '@/app/components/PressingBackground';
 
 interface GarmentForm {
   type: string;
@@ -16,15 +17,17 @@ function SectionCard({
   title,
   children,
   action,
+  delay = 0,
 }: {
   title: string;
   children: React.ReactNode;
   action?: React.ReactNode;
+  delay?: number;
 }) {
   return (
     <div
-      className="bg-white rounded-2xl p-5"
-      style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+      className="glass-card rounded-2xl p-5 shadow-premium-sm animate-fade-up"
+      style={{ animationDelay: `${delay}ms` }}
     >
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
@@ -32,10 +35,7 @@ function SectionCard({
             className="w-1 h-5 rounded-full"
             style={{ background: 'linear-gradient(180deg, #C81E6E, #87CEEB)' }}
           />
-          <h2
-            className="font-semibold"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
-          >
+          <h2 className="font-semibold font-display" style={{ color: '#1A1A2E' }}>
             {title}
           </h2>
         </div>
@@ -66,16 +66,7 @@ function Field({
 }
 
 const fieldClasses =
-  'w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:outline-none focus:bg-white transition-all text-sm';
-
-function focusPink(e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) {
-  e.target.style.boxShadow = '0 0 0 3px rgba(200, 30, 110, 0.15)';
-  e.target.style.borderColor = '#C81E6E';
-}
-function blurPink(e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) {
-  e.target.style.boxShadow = 'none';
-  e.target.style.borderColor = '';
-}
+  'input-premium w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:outline-none focus:bg-white text-sm';
 
 export default function NouvelleCommandePage() {
   const router = useRouter();
@@ -246,21 +237,19 @@ export default function NouvelleCommandePage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4" style={bgStyle}>
+      <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden" style={bgStyle}>
+        <PressingBackground />
         <div
-          className="bg-white rounded-2xl p-8 text-center max-w-sm"
+          className="glass-card rounded-2xl p-8 text-center max-w-sm relative z-10 animate-scale-in"
           style={{ boxShadow: '0 20px 60px -15px rgba(200, 30, 110, 0.25)' }}
         >
           <div
-            className="w-14 h-14 rounded-full mx-auto mb-4 flex items-center justify-center text-2xl"
+            className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl animate-pulse-glow"
             style={{ background: '#DCFCE7' }}
           >
             ✅
           </div>
-          <p
-            className="text-lg font-semibold"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
-          >
+          <p className="text-lg font-semibold font-display" style={{ color: '#1A1A2E' }}>
             Commande enregistrée
           </p>
           <p className="text-sm text-slate-400 mt-1">Redirection en cours...</p>
@@ -271,29 +260,19 @@ export default function NouvelleCommandePage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={bgStyle}>
-      <div
-        className="absolute -top-20 -left-20 w-72 h-72 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#C81E6E' }}
-      />
-      <div
-        className="absolute top-40 -right-16 w-80 h-80 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#87CEEB' }}
-      />
+      <PressingBackground />
 
-      <div className="max-w-2xl mx-auto px-4 py-6 relative">
-        <div className="mb-6">
+      <div className="max-w-2xl mx-auto px-4 py-6 relative z-10">
+        <div className="mb-6 animate-fade-up">
           <OverdueAlert />
-          <h1
-            className="text-2xl font-bold tracking-tight"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
-          >
-            Nouvelle <span style={{ color: '#C81E6E' }}>commande</span>
+          <h1 className="text-2xl font-bold tracking-tight font-display" style={{ color: '#1A1A2E' }}>
+            Nouvelle <span className="text-gradient-pressing">commande</span>
           </h1>
           <p className="text-xs text-slate-400 italic">MN Pressing</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <SectionCard title="Informations client">
+          <SectionCard title="Informations client" delay={40}>
             <div className="space-y-3">
               <Field label="Nom complet" required>
                 <input
@@ -301,8 +280,6 @@ export default function NouvelleCommandePage() {
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  onFocus={focusPink}
-                  onBlur={blurPink}
                   className={fieldClasses}
                 />
               </Field>
@@ -312,8 +289,6 @@ export default function NouvelleCommandePage() {
                   required
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
-                  onFocus={focusPink}
-                  onBlur={blurPink}
                   className={fieldClasses}
                 />
               </Field>
@@ -322,15 +297,13 @@ export default function NouvelleCommandePage() {
                   type="email"
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
-                  onFocus={focusPink}
-                  onBlur={blurPink}
                   className={fieldClasses}
                 />
               </Field>
             </div>
           </SectionCard>
 
-          <SectionCard title="Dates">
+          <SectionCard title="Dates" delay={90}>
             <div className="grid grid-cols-2 gap-3 mb-3">
               <Field label="Date de dépôt" required>
                 <input
@@ -338,8 +311,6 @@ export default function NouvelleCommandePage() {
                   required
                   value={depositDate}
                   onChange={(e) => setDepositDate(e.target.value)}
-                  onFocus={focusPink}
-                  onBlur={blurPink}
                   className={fieldClasses}
                 />
               </Field>
@@ -349,8 +320,6 @@ export default function NouvelleCommandePage() {
                   required
                   value={expectedReturnDate}
                   onChange={(e) => setExpectedReturnDate(e.target.value)}
-                  onFocus={focusPink}
-                  onBlur={blurPink}
                   className={fieldClasses}
                 />
               </Field>
@@ -359,8 +328,6 @@ export default function NouvelleCommandePage() {
               <textarea
                 value={observations}
                 onChange={(e) => setObservations(e.target.value)}
-                onFocus={focusPink}
-                onBlur={blurPink}
                 className={fieldClasses}
                 rows={2}
               />
@@ -369,11 +336,12 @@ export default function NouvelleCommandePage() {
 
           <SectionCard
             title="Vêtements"
+            delay={140}
             action={
               <button
                 type="button"
                 onClick={addGarment}
-                className="text-xs font-semibold px-3 py-1.5 rounded-lg"
+                className="text-xs font-semibold px-3 py-1.5 rounded-lg transition-transform hover:-translate-y-0.5"
                 style={{ background: '#FDF2F8', color: '#C81E6E' }}
               >
                 + Ajouter
@@ -384,14 +352,14 @@ export default function NouvelleCommandePage() {
               {garments.map((garment, index) => (
                 <div
                   key={index}
-                  className="rounded-xl p-4 relative"
+                  className="rounded-xl p-4 relative animate-fade-up"
                   style={{ background: '#FAFAFA', border: '1px solid #F1F5F9' }}
                 >
                   {garments.length > 1 && (
                     <button
                       type="button"
                       onClick={() => removeGarment(index)}
-                      className="absolute top-3 right-3 text-xs font-medium"
+                      className="absolute top-3 right-3 text-xs font-medium hover:underline"
                       style={{ color: '#EF4444' }}
                     >
                       Retirer
@@ -411,8 +379,6 @@ export default function NouvelleCommandePage() {
                       required
                       value={garment.type}
                       onChange={(e) => updateGarment(index, 'type', e.target.value)}
-                      onFocus={focusPink}
-                      onBlur={blurPink}
                       className={fieldClasses + ' bg-white'}
                     />
                     <input
@@ -421,8 +387,6 @@ export default function NouvelleCommandePage() {
                       required
                       value={garment.description}
                       onChange={(e) => updateGarment(index, 'description', e.target.value)}
-                      onFocus={focusPink}
-                      onBlur={blurPink}
                       className={fieldClasses + ' bg-white'}
                     />
                     <input
@@ -430,8 +394,6 @@ export default function NouvelleCommandePage() {
                       placeholder="Observations (tache, bouton manquant...)"
                       value={garment.observations}
                       onChange={(e) => updateGarment(index, 'observations', e.target.value)}
-                      onFocus={focusPink}
-                      onBlur={blurPink}
                       className={fieldClasses + ' bg-white'}
                     />
 
@@ -449,7 +411,8 @@ export default function NouvelleCommandePage() {
                         className="text-xs"
                       />
                       {garment.uploading && (
-                        <p className="text-xs mt-1" style={{ color: '#87CEEB' }}>
+                        <p className="text-xs mt-1 flex items-center gap-1.5" style={{ color: '#3AA0D6' }}>
+                          <span className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
                           Envoi en cours...
                         </p>
                       )}
@@ -461,7 +424,7 @@ export default function NouvelleCommandePage() {
                               key={i}
                               src={url}
                               alt="vêtement"
-                              className="w-16 h-16 object-cover rounded-lg"
+                              className="w-16 h-16 object-cover rounded-lg animate-scale-in"
                               style={{ border: '1px solid #F1F5F9' }}
                             />
                           ))}
@@ -474,7 +437,7 @@ export default function NouvelleCommandePage() {
             </div>
           </SectionCard>
 
-          <SectionCard title="Informations financières">
+          <SectionCard title="Informations financières" delay={190}>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Prix total (FCFA)" required>
                 <input
@@ -483,8 +446,6 @@ export default function NouvelleCommandePage() {
                   min="0"
                   value={totalPrice}
                   onChange={(e) => setTotalPrice(e.target.value)}
-                  onFocus={focusPink}
-                  onBlur={blurPink}
                   className={fieldClasses}
                 />
               </Field>
@@ -494,14 +455,12 @@ export default function NouvelleCommandePage() {
                   min="0"
                   value={paidAmount}
                   onChange={(e) => setPaidAmount(e.target.value)}
-                  onFocus={focusPink}
-                  onBlur={blurPink}
                   className={fieldClasses}
                 />
               </Field>
             </div>
             <div
-              className="mt-4 rounded-xl p-3 flex justify-between items-center"
+              className="mt-4 rounded-xl p-3 flex justify-between items-center transition-all"
               style={{ background: '#FDF2F8' }}
             >
               <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
@@ -514,7 +473,7 @@ export default function NouvelleCommandePage() {
           </SectionCard>
 
           {error && (
-            <p className="text-sm bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-2.5">
+            <p className="text-sm bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-2.5 animate-fade-in">
               {error}
             </p>
           )}
@@ -522,13 +481,20 @@ export default function NouvelleCommandePage() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full text-white font-semibold py-3.5 rounded-xl transition-all disabled:opacity-50"
+            className="btn-shimmer w-full text-white font-semibold py-3.5 rounded-xl transition-all disabled:opacity-50 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0"
             style={{
               background: 'linear-gradient(135deg, #C81E6E 0%, #A0164F 100%)',
               boxShadow: '0 8px 20px -6px rgba(200, 30, 110, 0.5)',
             }}
           >
-            {submitting ? 'Enregistrement...' : 'Enregistrer la commande'}
+            {submitting ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                Enregistrement...
+              </span>
+            ) : (
+              'Enregistrer la commande'
+            )}
           </button>
         </form>
       </div>
