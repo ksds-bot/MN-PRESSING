@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
+import PressingBackground from '@/app/components/PressingBackground';
 
 interface PublicOrder {
   receiptNumber: string;
@@ -93,21 +94,26 @@ export default function SuiviCommandePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={bgStyle}>
-        <p className="text-slate-400 text-sm">Chargement de votre commande...</p>
+      <div className="min-h-screen flex items-center justify-center relative overflow-hidden" style={bgStyle}>
+        <PressingBackground />
+        <div className="relative z-10 flex flex-col items-center gap-4">
+          <div className="washing-machine animate-spin-slow">
+            <div className="drum" />
+            <div className="clothes animate-spin-slower" />
+          </div>
+          <p className="text-slate-400 text-sm">Chargement de votre commande...</p>
+        </div>
       </div>
     );
   }
 
   if (error || !order) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4" style={bgStyle}>
-        <div className="bg-white rounded-2xl shadow-lg p-8 text-center max-w-sm">
-          <p
-            className="text-lg font-bold mb-2"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
-          >
-            MN <span style={{ color: '#C81E6E' }}>Pressing</span>
+      <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden" style={bgStyle}>
+        <PressingBackground />
+        <div className="glass-card rounded-2xl shadow-premium p-8 text-center max-w-sm relative z-10 animate-scale-in">
+          <p className="text-lg font-bold mb-2 font-display" style={{ color: '#1A1A2E' }}>
+            MN <span className="text-gradient-pressing">Pressing</span>
           </p>
           <p className="text-red-600 text-sm">{error || 'Commande introuvable'}</p>
         </div>
@@ -119,59 +125,69 @@ export default function SuiviCommandePage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={bgStyle}>
-      <div
-        className="absolute -top-20 -left-20 w-72 h-72 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#C81E6E' }}
-      />
-      <div
-        className="absolute top-40 -right-16 w-80 h-80 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#87CEEB' }}
-      />
+      <PressingBackground />
 
-      <div className="max-w-lg mx-auto px-4 py-8 relative">
-        <div className="text-center mb-6">
-          <h1
-            className="text-2xl font-bold tracking-tight mb-1"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
-          >
-            MN <span style={{ color: '#C81E6E' }}>Pressing</span>
+      <div className="max-w-lg mx-auto px-4 py-8 relative z-10">
+        <div className="text-center mb-6 animate-fade-up">
+          <div className="flex justify-center mb-3">
+            <div className="relative w-14 h-14">
+              <div
+                className="absolute inset-0 rounded-full animate-spin-slow"
+                style={{
+                  background: 'conic-gradient(from 0deg, #C81E6E, #87CEEB, #F9A8D4, #C81E6E)',
+                  opacity: 0.9,
+                }}
+              />
+              <div className="absolute inset-1.5 rounded-full bg-white flex items-center justify-center shadow-inner">
+                <span className="text-xl">✨</span>
+              </div>
+            </div>
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight mb-1 font-display" style={{ color: '#1A1A2E' }}>
+            MN <span className="text-gradient-pressing">Pressing</span>
           </h1>
           <p className="text-xs text-slate-400">Suivi de commande</p>
         </div>
 
         <div
-          className="rounded-2xl p-6 mb-5 text-center"
+          className="rounded-2xl p-6 mb-5 text-center relative overflow-hidden animate-scale-in"
           style={{
             background: 'linear-gradient(135deg, #C81E6E 0%, #A0164F 100%)',
             boxShadow: '0 12px 28px -8px rgba(200, 30, 110, 0.45)',
           }}
         >
-          <p className="text-xs uppercase tracking-wide mb-2" style={{ color: 'rgba(255,255,255,0.75)' }}>
+          <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-white/10 animate-pulse-glow" />
+          <div className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-white/10 animate-pulse-glow" style={{ animationDelay: '1.5s' }} />
+          <p className="text-xs uppercase tracking-wide mb-2 relative" style={{ color: 'rgba(255,255,255,0.75)' }}>
             {order.receiptNumber}
           </p>
-          <p className="text-2xl font-bold text-white mb-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+          <p className="text-2xl font-bold text-white mb-2 font-display relative">
             {STATUS_LABELS[order.status] || order.status}
           </p>
-          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.9)' }}>
+          <p className="text-sm relative" style={{ color: 'rgba(255,255,255,0.9)' }}>
             {STATUS_DESCRIPTIONS[order.status]}
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl p-5 mb-5" style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}>
+        <div
+          className="glass-card rounded-2xl p-5 mb-5 shadow-premium-sm animate-fade-up"
+          style={{ animationDelay: '90ms' }}
+        >
           <div className="flex items-center justify-between">
             {STATUS_ORDER.map((s, i) => (
               <div key={s} className="flex-1 flex flex-col items-center relative">
                 {i > 0 && (
                   <div
-                    className="absolute top-3 right-1/2 w-full h-0.5"
+                    className="absolute top-3 right-1/2 w-full h-0.5 transition-all duration-700"
                     style={{ background: i <= currentIndex ? '#C81E6E' : '#E2E8F0', zIndex: 0 }}
                   />
                 )}
                 <div
-                  className="w-6 h-6 rounded-full flex items-center justify-center relative z-10 text-xs font-bold"
+                  className="w-6 h-6 rounded-full flex items-center justify-center relative z-10 text-xs font-bold transition-all duration-500"
                   style={{
                     background: i <= currentIndex ? '#C81E6E' : '#E2E8F0',
                     color: i <= currentIndex ? '#fff' : '#94A3B8',
+                    boxShadow: i === currentIndex ? '0 0 0 4px rgba(200,30,110,0.2)' : 'none',
                   }}
                 >
                   {i <= currentIndex ? '✓' : ''}
@@ -187,10 +203,13 @@ export default function SuiviCommandePage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 mb-5" style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}>
+        <div
+          className="glass-card rounded-2xl p-6 mb-5 shadow-premium-sm animate-fade-up"
+          style={{ animationDelay: '140ms' }}
+        >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, #C81E6E, #87CEEB)' }} />
-            <h2 className="font-semibold text-sm" style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}>
+            <h2 className="font-semibold text-sm font-display" style={{ color: '#1A1A2E' }}>
               Détails
             </h2>
           </div>
@@ -233,8 +252,8 @@ export default function SuiviCommandePage() {
 
         {(order.incidents.length > 0 || order.observations) && (
           <div
-            className="rounded-2xl p-5 mb-5"
-            style={{ background: '#FFF7ED', border: '1px solid #FED7AA' }}
+            className="rounded-2xl p-5 mb-5 animate-fade-up"
+            style={{ background: '#FFF7ED', border: '1px solid #FED7AA', animationDelay: '190ms' }}
           >
             <p className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ color: '#B45309' }}>
               Informations importantes
@@ -263,10 +282,13 @@ export default function SuiviCommandePage() {
           </div>
         )}
 
-        <div className="bg-white rounded-2xl p-6" style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}>
+        <div
+          className="glass-card rounded-2xl p-6 shadow-premium-sm animate-fade-up"
+          style={{ animationDelay: '240ms' }}
+        >
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, #C81E6E, #87CEEB)' }} />
-            <h2 className="font-semibold text-sm" style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}>
+            <h2 className="font-semibold text-sm font-display" style={{ color: '#1A1A2E' }}>
               Paiement
             </h2>
           </div>
@@ -301,7 +323,7 @@ export default function SuiviCommandePage() {
           </div>
         </div>
 
-        <p className="text-center text-xs text-slate-400 mt-6">
+        <p className="text-center text-xs text-slate-400 mt-6 animate-fade-in">
           Pour toute question, contactez directement votre pressing.
         </p>
       </div>
