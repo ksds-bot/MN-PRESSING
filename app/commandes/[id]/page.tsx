@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import PressingBackground from '@/app/components/PressingBackground';
 
 interface Garment {
   id: string;
@@ -276,23 +277,31 @@ export default function CommandeDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={bgStyle}>
-        <p className="text-slate-400 text-sm">Chargement...</p>
+      <div className="min-h-screen flex items-center justify-center relative overflow-hidden" style={bgStyle}>
+        <PressingBackground />
+        <div className="relative z-10 flex flex-col items-center gap-4">
+          <div className="washing-machine animate-spin-slow">
+            <div className="drum" />
+            <div className="clothes animate-spin-slower" />
+          </div>
+          <p className="text-slate-400 text-sm">Chargement...</p>
+        </div>
       </div>
     );
   }
 
   if (error || !order) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4" style={bgStyle}>
+      <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden" style={bgStyle}>
+        <PressingBackground />
         <div
-          className="bg-white rounded-2xl p-6 text-center max-w-sm"
+          className="glass-card rounded-2xl p-6 text-center max-w-sm relative z-10 animate-scale-in"
           style={{ boxShadow: '0 4px 20px -6px rgba(26,26,46,0.08)' }}
         >
           <p className="text-red-600 mb-4 text-sm">{error || 'Commande introuvable'}</p>
           <button
             onClick={() => router.push('/commandes')}
-            className="text-white px-5 py-2.5 rounded-xl font-medium text-sm"
+            className="text-white px-5 py-2.5 rounded-xl font-medium text-sm transition-transform hover:-translate-y-0.5"
             style={{ background: '#C81E6E' }}
           >
             Retour aux commandes
@@ -306,39 +315,32 @@ export default function CommandeDetailPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={bgStyle}>
-      <div
-        className="absolute -top-20 -left-20 w-72 h-72 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#C81E6E' }}
-      />
-      <div
-        className="absolute top-40 -right-16 w-80 h-80 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#87CEEB' }}
-      />
+      <PressingBackground />
 
-      <div className="max-w-2xl mx-auto px-4 py-6 relative">
+      <div className="max-w-2xl mx-auto px-4 py-6 relative z-10">
         <button
           onClick={() => router.push('/commandes')}
-          className="text-sm text-slate-500 mb-4 flex items-center gap-1"
+          className="text-sm text-slate-500 mb-4 flex items-center gap-1 hover:text-slate-700 transition-colors animate-fade-up"
         >
           ← Retour
         </button>
 
         {/* En-tête commande */}
         <div
-          className="bg-white rounded-2xl p-5 mb-4"
-          style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+          className="glass-card rounded-2xl p-5 mb-4 shadow-premium-sm animate-fade-up"
+          style={{ animationDelay: '40ms' }}
         >
           <div className="flex justify-between items-start mb-3">
             <div>
               <h1
-                className="text-xl font-bold cursor-pointer"
-                style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
+                className="text-xl font-bold cursor-pointer font-display hover:text-pressing-rose transition-colors"
+                style={{ color: '#1A1A2E' }}
                 onClick={() => router.push(`/clients/${order.customer.id}`)}
               >
                 {order.customer.fullName}
               </h1>
               <p
-                className="text-xs font-medium cursor-pointer"
+                className="text-xs font-medium cursor-pointer hover:underline"
                 style={{ color: '#C81E6E' }}
                 onClick={() => router.push(`/clients/${order.customer.id}`)}
               >
@@ -347,7 +349,7 @@ export default function CommandeDetailPage() {
               <p className="text-sm text-slate-400 mt-1">{order.customer.phoneNumber}</p>
             </div>
             <span
-              className="text-xs font-semibold px-3 py-1.5 rounded-full"
+              className="text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap"
               style={{
                 background: STATUS_COLORS[order.status]?.bg,
                 color: STATUS_COLORS[order.status]?.text,
@@ -367,7 +369,7 @@ export default function CommandeDetailPage() {
               navigator.clipboard.writeText(link);
               alert('Lien de suivi copié ! Vous pouvez le transmettre au client.');
             }}
-            className="text-xs font-medium mt-2 px-3 py-1.5 rounded-lg inline-flex items-center gap-1"
+            className="text-xs font-medium mt-2 px-3 py-1.5 rounded-lg inline-flex items-center gap-1 transition-transform hover:-translate-y-0.5"
             style={{ background: '#E0F2FE', color: '#0369A1' }}
           >
             Copier le lien de suivi client
@@ -382,7 +384,7 @@ export default function CommandeDetailPage() {
         {order.status === 'READY' && (
           <button
             onClick={sendWhatsApp}
-            className="w-full mb-4 flex items-center justify-center gap-2 text-white font-semibold py-3.5 rounded-xl"
+            className="btn-shimmer w-full mb-4 flex items-center justify-center gap-2 text-white font-semibold py-3.5 rounded-xl transition-transform hover:-translate-y-0.5 animate-fade-up"
             style={{ background: '#25D366', boxShadow: '0 8px 20px -6px rgba(37, 211, 102, 0.5)' }}
           >
             📱 Envoyer sur WhatsApp
@@ -392,8 +394,8 @@ export default function CommandeDetailPage() {
         {/* Changement de statut (admin uniquement) */}
         {isAdmin && (
           <div
-            className="bg-white rounded-2xl p-5 mb-4"
-            style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+            className="glass-card rounded-2xl p-5 mb-4 shadow-premium-sm animate-fade-up"
+            style={{ animationDelay: '90ms' }}
           >
             <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">
               Changer le statut
@@ -404,7 +406,7 @@ export default function CommandeDetailPage() {
                   key={s}
                   onClick={() => updateStatus(s)}
                   disabled={updating}
-                  className="text-xs font-medium px-3 py-2 rounded-lg transition-all disabled:opacity-50"
+                  className="text-xs font-medium px-3 py-2 rounded-lg transition-all disabled:opacity-50 hover:-translate-y-0.5"
                   style={{
                     background: i === currentStatusIndex ? '#1A1A2E' : STATUS_COLORS[s].bg,
                     color: i === currentStatusIndex ? '#FFFFFF' : STATUS_COLORS[s].text,
@@ -419,15 +421,15 @@ export default function CommandeDetailPage() {
 
         {/* Vêtements */}
         <div
-          className="bg-white rounded-2xl p-5 mb-4"
-          style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+          className="glass-card rounded-2xl p-5 mb-4 shadow-premium-sm animate-fade-up"
+          style={{ animationDelay: '140ms' }}
         >
           <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">
             Vêtements ({order.garments.length})
           </h2>
           <div className="space-y-3">
             {order.garments.map((g) => (
-              <div key={g.id} className="rounded-xl p-3" style={{ background: '#FAFAFA' }}>
+              <div key={g.id} className="rounded-xl p-3 transition-transform hover:-translate-y-0.5" style={{ background: '#FAFAFA' }}>
                 <p className="font-semibold text-sm" style={{ color: '#1A1A2E' }}>
                   {g.type}
                 </p>
@@ -447,7 +449,7 @@ export default function CommandeDetailPage() {
                   key={p.id}
                   src={p.url}
                   alt="vêtement"
-                  className="w-20 h-20 object-cover rounded-lg"
+                  className="w-20 h-20 object-cover rounded-lg transition-transform hover:scale-105"
                   style={{ border: '1px solid #F1F5F9' }}
                 />
               ))}
@@ -457,8 +459,8 @@ export default function CommandeDetailPage() {
 
         {/* Incidents / observations visibles par le client */}
         <div
-          className="bg-white rounded-2xl p-5 mb-4"
-          style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+          className="glass-card rounded-2xl p-5 mb-4 shadow-premium-sm animate-fade-up"
+          style={{ animationDelay: '190ms' }}
         >
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -471,7 +473,7 @@ export default function CommandeDetailPage() {
               {incidents.map((inc) => (
                 <div
                   key={inc.id}
-                  className="rounded-xl p-3 flex justify-between items-start gap-2"
+                  className="rounded-xl p-3 flex justify-between items-start gap-2 animate-fade-up"
                   style={{ background: '#FFF7ED', border: '1px solid #FED7AA' }}
                 >
                   <div>
@@ -497,20 +499,20 @@ export default function CommandeDetailPage() {
           )}
 
           {showIncidentInput ? (
-            <div className="space-y-2">
+            <div className="space-y-2 animate-fade-in">
               <textarea
                 placeholder="Ex : Panne de la machine à laver, retard prévu de 24h..."
                 value={incidentMessage}
                 onChange={(e) => setIncidentMessage(e.target.value)}
                 maxLength={500}
                 rows={3}
-                className="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none resize-none"
+                className="input-premium w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none resize-none"
               />
               <div className="flex gap-2">
                 <button
                   onClick={addIncident}
                   disabled={postingIncident || !incidentMessage.trim()}
-                  className="text-sm font-medium px-4 py-2 rounded-xl text-white disabled:opacity-50"
+                  className="text-sm font-medium px-4 py-2 rounded-xl text-white disabled:opacity-50 transition-transform hover:-translate-y-0.5"
                   style={{ background: '#C81E6E' }}
                 >
                   Publier
@@ -530,7 +532,7 @@ export default function CommandeDetailPage() {
           ) : (
             <button
               onClick={() => setShowIncidentInput(true)}
-              className="w-full text-sm font-medium py-2.5 rounded-xl"
+              className="w-full text-sm font-medium py-2.5 rounded-xl transition-transform hover:-translate-y-0.5"
               style={{ background: '#FFF7ED', color: '#B45309' }}
             >
               + Signaler un incident / une observation
@@ -540,8 +542,8 @@ export default function CommandeDetailPage() {
 
         {/* Financier */}
         <div
-          className="bg-white rounded-2xl p-5"
-          style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+          className="glass-card rounded-2xl p-5 shadow-premium-sm animate-fade-up"
+          style={{ animationDelay: '240ms' }}
         >
           <h2 className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">
             Paiement
@@ -571,18 +573,18 @@ export default function CommandeDetailPage() {
           {order.remainingAmount > 0 && (
             <>
               {showPaymentInput ? (
-                <div className="flex gap-2">
+                <div className="flex gap-2 animate-fade-in">
                   <input
                     type="number"
                     placeholder="Montant"
                     value={paymentAmount}
                     onChange={(e) => setPaymentAmount(e.target.value)}
-                    className="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none"
+                    className="input-premium flex-1 px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-none"
                   />
                   <button
                     onClick={addPayment}
                     disabled={updating}
-                    className="text-sm font-medium px-4 py-2 rounded-xl text-white disabled:opacity-50"
+                    className="text-sm font-medium px-4 py-2 rounded-xl text-white disabled:opacity-50 transition-transform hover:-translate-y-0.5"
                     style={{ background: '#C81E6E' }}
                   >
                     Valider
@@ -591,7 +593,7 @@ export default function CommandeDetailPage() {
               ) : (
                 <button
                   onClick={() => setShowPaymentInput(true)}
-                  className="w-full text-sm font-medium py-2.5 rounded-xl"
+                  className="w-full text-sm font-medium py-2.5 rounded-xl transition-transform hover:-translate-y-0.5"
                   style={{ background: '#FDF2F8', color: '#C81E6E' }}
                 >
                   + Enregistrer un paiement
