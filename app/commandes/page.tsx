@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import PressingBackground from '@/app/components/PressingBackground';
 
 interface Order {
   id: string;
@@ -87,29 +88,19 @@ export default function CommandesPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={bgStyle}>
-      <div
-        className="absolute -top-20 -left-20 w-72 h-72 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#C81E6E' }}
-      />
-      <div
-        className="absolute top-40 -right-16 w-80 h-80 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#87CEEB' }}
-      />
+      <PressingBackground />
 
-      <div className="max-w-3xl mx-auto px-4 py-6 relative">
-        <div className="flex justify-between items-center mb-6">
+      <div className="max-w-3xl mx-auto px-4 py-6 relative z-10">
+        <div className="flex justify-between items-center mb-6 animate-fade-up">
           <div>
-            <h1
-              className="text-2xl font-bold tracking-tight"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
-            >
+            <h1 className="text-2xl font-bold tracking-tight font-display" style={{ color: '#1A1A2E' }}>
               Commandes
             </h1>
             <p className="text-xs text-slate-400 italic">MN Pressing</p>
           </div>
           <button
             onClick={() => router.push('/commandes/nouvelle')}
-            className="text-sm font-medium px-4 py-2.5 rounded-xl text-white"
+            className="btn-shimmer text-sm font-medium px-4 py-2.5 rounded-xl text-white transition-all hover:-translate-y-0.5"
             style={{
               background: 'linear-gradient(135deg, #C81E6E 0%, #A0164F 100%)',
               boxShadow: '0 8px 20px -8px rgba(200, 30, 110, 0.5)',
@@ -121,23 +112,15 @@ export default function CommandesPage() {
 
         {/* Barre de recherche */}
         <div
-          className="bg-white rounded-2xl p-4 mb-4"
-          style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+          className="glass-card rounded-2xl p-4 mb-4 shadow-premium-sm animate-fade-up"
+          style={{ animationDelay: '60ms' }}
         >
           <input
             type="text"
             placeholder="Rechercher par nom, téléphone ou n° reçu..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:outline-none text-sm mb-3"
-            onFocus={(e) => {
-              e.target.style.boxShadow = '0 0 0 3px rgba(200, 30, 110, 0.15)';
-              e.target.style.borderColor = '#C81E6E';
-            }}
-            onBlur={(e) => {
-              e.target.style.boxShadow = 'none';
-              e.target.style.borderColor = '';
-            }}
+            className="input-premium w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:outline-none text-sm mb-3"
           />
 
           <div className="flex gap-2 flex-wrap">
@@ -169,24 +152,32 @@ export default function CommandesPage() {
 
         {/* Liste */}
         {loading ? (
-          <p className="text-center text-slate-400 text-sm py-8">Chargement...</p>
+          <div className="flex flex-col items-center gap-3 py-10">
+            <div className="washing-machine animate-spin-slow" style={{ width: 60, height: 60 }}>
+              <div className="drum" />
+              <div className="clothes animate-spin-slower" />
+            </div>
+            <p className="text-center text-slate-400 text-sm">Chargement...</p>
+          </div>
         ) : error ? (
           <p className="text-center text-red-500 text-sm py-8">{error}</p>
         ) : orders.length === 0 ? (
           <div
-            className="bg-white rounded-2xl p-8 text-center"
-            style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+            className="glass-card rounded-2xl p-8 text-center shadow-premium-sm animate-fade-up"
           >
             <p className="text-slate-400 text-sm italic">Aucune commande trouvée.</p>
           </div>
         ) : (
           <div className="space-y-3">
-            {orders.map((order) => (
+            {orders.map((order, i) => (
               <button
                 key={order.id}
                 onClick={() => router.push(`/commandes/${order.id}`)}
-                className="w-full text-left bg-white rounded-2xl p-4 transition-transform active:scale-[0.98]"
-                style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+                className="w-full text-left bg-white rounded-2xl p-4 transition-all active:scale-[0.98] hover:-translate-y-0.5 hover:shadow-md animate-fade-up"
+                style={{
+                  boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)',
+                  animationDelay: `${Math.min(i * 40, 400)}ms`,
+                }}
               >
                 <div className="flex justify-between items-start mb-2">
                   <div>
