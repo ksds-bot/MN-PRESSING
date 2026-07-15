@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import PressingBackground from '../components/PressingBackground';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -51,77 +52,140 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-100 px-4">
-      <div className="w-full max-w-sm bg-white rounded-xl shadow-lg p-8">
-        <h1 className="text-2xl font-bold text-slate-800 mb-1 text-center">MN Pressing</h1>
-        <p className="text-slate-500 text-sm text-center mb-6">Créer un compte</p>
+    <div
+      className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden py-10"
+      style={{
+        background: 'linear-gradient(160deg, #E0F2FE 0%, #FFFFFF 45%, #FDF2F8 100%)',
+      }}
+    >
+      <PressingBackground />
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Nom complet</label>
-            <input
-              type="text"
-              name="name"
-              required
-              value={form.name}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-800"
+      <div className="w-full max-w-sm relative z-10 animate-fade-up">
+        <div className="flex justify-center mb-6">
+          <div className="relative w-16 h-16">
+            <div
+              className="absolute inset-0 rounded-full animate-spin-slow"
+              style={{
+                background: 'conic-gradient(from 0deg, #87CEEB, #C81E6E, #F9A8D4, #87CEEB)',
+                opacity: 0.9,
+              }}
             />
+            <div className="absolute inset-1.5 rounded-full bg-white flex items-center justify-center shadow-inner">
+              <span className="text-2xl">🧺</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="glass-card rounded-3xl p-8 relative shadow-premium animate-scale-in">
+          <div
+            className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-1.5 rounded-full"
+            style={{ background: 'linear-gradient(90deg, #87CEEB, #C81E6E)' }}
+          />
+
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold mb-1 tracking-tight font-display" style={{ color: '#1A1A2E' }}>
+              MN <span className="text-gradient-pressing">Pressing</span>
+            </h1>
+            <p className="text-xs italic text-slate-400 tracking-wide">Créer un compte</p>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
-            <input
-              type="email"
-              name="email"
-              required
-              value={form.email}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-800"
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">
+                Nom complet
+              </label>
+              <input
+                type="text"
+                name="name"
+                required
+                value={form.name}
+                onChange={handleChange}
+                className="input-premium w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:outline-none"
+                placeholder="Votre nom"
+              />
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Mot de passe</label>
-            <input
-              type="password"
-              name="password"
-              required
-              value={form.password}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-800"
-            />
-            <p className="text-xs text-slate-400 mt-1">
-              Min. 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre
-            </p>
-          </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                required
+                value={form.email}
+                onChange={handleChange}
+                className="input-premium w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:outline-none"
+                placeholder="vous@exemple.com"
+              />
+            </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Confirmer le mot de passe</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              required
-              value={form.confirmPassword}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-800"
-            />
-          </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">
+                Mot de passe
+              </label>
+              <input
+                type="password"
+                name="password"
+                required
+                value={form.password}
+                onChange={handleChange}
+                className="input-premium w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:outline-none"
+                placeholder="••••••••"
+              />
+              <p className="text-xs text-slate-400 mt-1.5">
+                Min. 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre
+              </p>
+            </div>
 
-          {error && (
-            <p className="text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg px-3 py-2">
-              {error}
-            </p>
-          )}
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">
+                Confirmer le mot de passe
+              </label>
+              <input
+                type="password"
+                name="confirmPassword"
+                required
+                value={form.confirmPassword}
+                onChange={handleChange}
+                className="input-premium w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50/50 focus:outline-none"
+                placeholder="••••••••"
+              />
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-900 hover:bg-blue-800 text-white font-medium py-2.5 rounded-lg transition disabled:opacity-50"
-          >
-            {loading ? 'Création...' : 'Créer le compte'}
-          </button>
-        </form>
+            {error && (
+              <p className="text-sm bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-2.5 animate-fade-in">
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="btn-shimmer w-full text-white font-semibold py-3.5 rounded-xl transition-all duration-300 disabled:opacity-50 mt-2 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0"
+              style={{
+                background: 'linear-gradient(135deg, #3AA0D6 0%, #C81E6E 100%)',
+                boxShadow: '0 8px 20px -6px rgba(58, 160, 214, 0.5)',
+              }}
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                  Création...
+                </span>
+              ) : (
+                'Créer le compte'
+              )}
+            </button>
+          </form>
+
+          <p className="text-center text-xs text-slate-400 mt-5">
+            Déjà un compte ?{' '}
+            <a href="/login" className="text-pressing-rose font-semibold hover:underline">
+              Se connecter
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
