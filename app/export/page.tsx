@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import PressingBackground from '@/app/components/PressingBackground';
 
 interface ExportOrder {
   id: string;
@@ -187,20 +188,28 @@ export default function ExportPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={bgStyle}>
-        <p className="text-slate-400 text-sm">Chargement de l&apos;export...</p>
+      <div className="min-h-screen flex items-center justify-center relative overflow-hidden" style={bgStyle}>
+        <PressingBackground />
+        <div className="relative z-10 flex flex-col items-center gap-4">
+          <div className="washing-machine animate-spin-slow">
+            <div className="drum" />
+            <div className="clothes animate-spin-slower" />
+          </div>
+          <p className="text-slate-400 text-sm">Chargement de l&apos;export...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4" style={bgStyle}>
-        <div className="bg-white rounded-2xl shadow-lg p-6 text-center max-w-sm">
+      <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden" style={bgStyle}>
+        <PressingBackground />
+        <div className="glass-card rounded-2xl shadow-premium p-6 text-center max-w-sm relative z-10 animate-scale-in">
           <p className="text-red-600 mb-4 text-sm">{error}</p>
           <button
             onClick={() => router.push('/dashboard')}
-            className="text-white px-5 py-2.5 rounded-xl font-medium text-sm"
+            className="text-white px-5 py-2.5 rounded-xl font-medium text-sm transition-transform hover:-translate-y-0.5"
             style={{ background: '#C81E6E' }}
           >
             Retour au tableau de bord
@@ -212,23 +221,13 @@ export default function ExportPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={bgStyle}>
-      <div
-        className="absolute -top-20 -left-20 w-72 h-72 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#C81E6E' }}
-      />
-      <div
-        className="absolute top-40 -right-16 w-80 h-80 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#87CEEB' }}
-      />
+      <PressingBackground />
 
-      <div className="max-w-6xl mx-auto px-4 py-6 relative">
-        <div className="flex justify-between items-center mb-6 flex-wrap gap-3">
+      <div className="max-w-6xl mx-auto px-4 py-6 relative z-10">
+        <div className="flex justify-between items-center mb-6 flex-wrap gap-3 animate-fade-up">
           <div>
-            <h1
-              className="text-2xl font-bold tracking-tight"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
-            >
-              Export <span style={{ color: '#C81E6E' }}>commandes</span>
+            <h1 className="text-2xl font-bold tracking-tight font-display" style={{ color: '#1A1A2E' }}>
+              Export <span className="text-gradient-pressing">commandes</span>
             </h1>
             <p className="text-xs text-slate-400 italic">
               Commandes déposées il y a plus de 7 jours
@@ -237,7 +236,7 @@ export default function ExportPage() {
           <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => router.push('/dashboard')}
-              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600"
+              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600 transition-all hover:-translate-y-0.5 hover:shadow-md"
               style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
             >
               Tableau de bord
@@ -245,7 +244,7 @@ export default function ExportPage() {
             <button
               onClick={handleDownloadPdf}
               disabled={orders.length === 0}
-              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600 disabled:opacity-50"
+              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600 disabled:opacity-50 transition-all hover:-translate-y-0.5 hover:shadow-md"
               style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
             >
               Télécharger PDF
@@ -253,7 +252,7 @@ export default function ExportPage() {
             <button
               onClick={handleDownloadCsv}
               disabled={orders.length === 0}
-              className="text-sm font-medium px-4 py-2.5 rounded-xl text-white disabled:opacity-50"
+              className="btn-shimmer text-sm font-medium px-4 py-2.5 rounded-xl text-white disabled:opacity-50 transition-all hover:-translate-y-0.5"
               style={{
                 background: 'linear-gradient(135deg, #C81E6E 0%, #A0164F 100%)',
                 boxShadow: '0 8px 20px -8px rgba(200, 30, 110, 0.5)',
@@ -266,42 +265,56 @@ export default function ExportPage() {
 
         {totals && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="rounded-2xl p-5 bg-white" style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}>
+            <div
+              className="rounded-2xl p-5 bg-white transition-transform hover:-translate-y-1 animate-fade-up"
+              style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)', animationDelay: '60ms' }}
+            >
               <p className="text-xs font-semibold uppercase tracking-wide mb-1 text-slate-400">Commandes</p>
-              <p className="text-2xl font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}>
+              <p className="text-2xl font-bold font-display" style={{ color: '#1A1A2E' }}>
                 {orders.length}
               </p>
             </div>
-            <div className="rounded-2xl p-5 bg-white" style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}>
+            <div
+              className="rounded-2xl p-5 bg-white transition-transform hover:-translate-y-1 animate-fade-up"
+              style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)', animationDelay: '110ms' }}
+            >
               <p className="text-xs font-semibold uppercase tracking-wide mb-1 text-slate-400">Vêtements</p>
-              <p className="text-2xl font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}>
+              <p className="text-2xl font-bold font-display" style={{ color: '#1A1A2E' }}>
                 {totals.garmentsCount}
               </p>
             </div>
-            <div className="rounded-2xl p-5 bg-white" style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}>
+            <div
+              className="rounded-2xl p-5 bg-white transition-transform hover:-translate-y-1 animate-fade-up"
+              style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)', animationDelay: '160ms' }}
+            >
               <p className="text-xs font-semibold uppercase tracking-wide mb-1 text-slate-400">Encaissé</p>
-              <p className="text-2xl font-bold" style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}>
+              <p className="text-2xl font-bold font-display" style={{ color: '#1A1A2E' }}>
                 {totals.paidAmount.toLocaleString()} <span className="text-xs font-normal">FCFA</span>
               </p>
             </div>
             <div
-              className="rounded-2xl p-5"
+              className="rounded-2xl p-5 relative overflow-hidden animate-fade-up"
               style={{
                 background: 'linear-gradient(135deg, #C81E6E 0%, #A0164F 100%)',
                 boxShadow: '0 12px 28px -8px rgba(200, 30, 110, 0.45)',
+                animationDelay: '210ms',
               }}
             >
-              <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: 'rgba(255,255,255,0.75)' }}>
+              <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-white/10 animate-pulse-glow" />
+              <p className="text-xs font-semibold uppercase tracking-wide mb-1 relative" style={{ color: 'rgba(255,255,255,0.75)' }}>
                 Restant
               </p>
-              <p className="text-2xl font-bold text-white">
+              <p className="text-2xl font-bold text-white relative">
                 {totals.remainingAmount.toLocaleString()} <span className="text-xs font-normal">FCFA</span>
               </p>
             </div>
           </div>
         )}
 
-        <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}>
+        <div
+          className="glass-card rounded-2xl overflow-hidden shadow-premium-sm animate-fade-up"
+          style={{ animationDelay: '260ms' }}
+        >
           {orders.length === 0 ? (
             <p className="text-slate-400 text-sm italic text-center py-10">
               Aucune commande de plus de 7 jours à exporter.
@@ -328,7 +341,7 @@ export default function ExportPage() {
                     return (
                       <tr
                         key={o.id}
-                        className="border-b border-slate-50 hover:bg-slate-50 cursor-pointer"
+                        className="border-b border-slate-50 hover:bg-slate-50 cursor-pointer transition-colors"
                         onClick={() => router.push(`/commandes/${o.id}`)}
                       >
                         <td className="px-4 py-3 font-medium text-slate-700 whitespace-nowrap">{o.receiptNumber}</td>
