@@ -60,7 +60,7 @@ export default function OverdueAlert() {
 
   return (
     <div
-      className="rounded-2xl p-4 mb-6"
+      className="rounded-2xl p-4 mb-6 animate-fade-up"
       style={{
         background: 'linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%)',
         border: '1px solid #FCA5A5',
@@ -72,7 +72,7 @@ export default function OverdueAlert() {
       >
         <div className="flex items-center gap-3">
           <div
-            className="w-9 h-9 rounded-full flex items-center justify-center text-lg flex-shrink-0"
+            className="w-9 h-9 rounded-full flex items-center justify-center text-lg flex-shrink-0 animate-pulse-glow"
             style={{ background: '#EF4444' }}
           >
             ⚠️
@@ -86,18 +86,19 @@ export default function OverdueAlert() {
             </p>
           </div>
         </div>
-        <span className="text-xs font-medium" style={{ color: '#B91C1C' }}>
+        <span className="text-xs font-medium transition-transform" style={{ color: '#B91C1C' }}>
           {expanded ? 'Réduire ▲' : 'Voir ▼'}
         </span>
       </button>
 
       {expanded && (
-        <div className="mt-3 space-y-2">
-          {orders.map((o) => (
+        <div className="mt-3 space-y-2 animate-fade-in">
+          {orders.map((o, i) => (
             <button
               key={o.id}
               onClick={() => router.push(`/commandes/${o.id}`)}
-              className="w-full text-left bg-white rounded-xl p-3 flex justify-between items-center"
+              className="w-full text-left bg-white rounded-xl p-3 flex justify-between items-center transition-transform hover:-translate-y-0.5 hover:shadow-sm animate-fade-up"
+              style={{ animationDelay: `${i * 40}ms` }}
             >
               <div>
                 <p className="text-sm font-semibold" style={{ color: '#1A1A2E' }}>
