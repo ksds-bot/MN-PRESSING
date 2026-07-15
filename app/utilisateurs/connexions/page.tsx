@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import PressingBackground from '@/app/components/PressingBackground';
 
 interface LoginEntry {
   id: string;
@@ -73,53 +74,49 @@ export default function ConnexionsPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={bgStyle}>
-      <div
-        className="absolute -top-20 -left-20 w-72 h-72 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#C81E6E' }}
-      />
-      <div
-        className="absolute top-40 -right-16 w-80 h-80 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#87CEEB' }}
-      />
+      <PressingBackground />
 
-      <div className="max-w-2xl mx-auto px-4 py-6 relative">
+      <div className="max-w-2xl mx-auto px-4 py-6 relative z-10">
         <button
           onClick={() => router.push('/utilisateurs')}
-          className="text-sm text-slate-500 mb-4 flex items-center gap-1"
+          className="text-sm text-slate-500 mb-4 flex items-center gap-1 hover:text-slate-700 transition-colors animate-fade-up"
         >
           ← Utilisateurs
         </button>
 
-        <div className="mb-6">
-          <h1
-            className="text-2xl font-bold tracking-tight"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
-          >
-            Historique des <span style={{ color: '#C81E6E' }}>connexions</span>
+        <div className="mb-6 animate-fade-up" style={{ animationDelay: '40ms' }}>
+          <h1 className="text-2xl font-bold tracking-tight font-display" style={{ color: '#1A1A2E' }}>
+            Historique des <span className="text-gradient-pressing">connexions</span>
           </h1>
           <p className="text-xs text-slate-400 italic">Suivi des accès à la plateforme</p>
         </div>
 
         {loading ? (
-          <p className="text-center text-slate-400 text-sm py-8">Chargement...</p>
+          <div className="flex flex-col items-center gap-3 py-10">
+            <div className="washing-machine animate-spin-slow" style={{ width: 60, height: 60 }}>
+              <div className="drum" />
+              <div className="clothes animate-spin-slower" />
+            </div>
+            <p className="text-center text-slate-400 text-sm">Chargement...</p>
+          </div>
         ) : error ? (
           <p className="text-center text-red-500 text-sm py-8">{error}</p>
         ) : history.length === 0 ? (
           <div
-            className="bg-white rounded-2xl p-8 text-center"
-            style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+            className="glass-card rounded-2xl p-8 text-center shadow-premium-sm animate-fade-up"
+            style={{ animationDelay: '90ms' }}
           >
             <p className="text-slate-400 text-sm italic">Aucune connexion enregistrée.</p>
           </div>
         ) : (
           <div
-            className="bg-white rounded-2xl overflow-hidden"
-            style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+            className="glass-card rounded-2xl overflow-hidden shadow-premium-sm animate-fade-up"
+            style={{ animationDelay: '90ms' }}
           >
             {history.map((entry, i) => (
               <div
                 key={entry.id}
-                className="flex justify-between items-center px-4 py-3"
+                className="flex justify-between items-center px-4 py-3 hover:bg-white/60 transition-colors"
                 style={{
                   borderBottom: i < history.length - 1 ? '1px solid #F1F5F9' : 'none',
                 }}
