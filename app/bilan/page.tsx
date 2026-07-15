@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import PressingBackground from '@/app/components/PressingBackground';
 
 interface StatWithChange {
   count: number;
@@ -35,7 +36,7 @@ function ChangeBadge({ value }: { value: number | null }) {
   const positive = value >= 0;
   return (
     <span
-      className="text-xs font-bold px-2.5 py-1 rounded-full"
+      className="text-xs font-bold px-2.5 py-1 rounded-full animate-scale-in"
       style={{
         background: positive ? '#DCFCE7' : '#FEE2E2',
         color: positive ? '#15803D' : '#DC2626',
@@ -98,23 +99,31 @@ export default function BilanPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={bgStyle}>
-        <p className="text-slate-400 text-sm">Chargement du bilan...</p>
+      <div className="min-h-screen flex items-center justify-center relative overflow-hidden" style={bgStyle}>
+        <PressingBackground />
+        <div className="relative z-10 flex flex-col items-center gap-4">
+          <div className="washing-machine animate-spin-slow">
+            <div className="drum" />
+            <div className="clothes animate-spin-slower" />
+          </div>
+          <p className="text-slate-400 text-sm">Chargement du bilan...</p>
+        </div>
       </div>
     );
   }
 
   if (error || !data) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4" style={bgStyle}>
+      <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden" style={bgStyle}>
+        <PressingBackground />
         <div
-          className="bg-white rounded-2xl p-6 text-center max-w-sm"
+          className="glass-card rounded-2xl p-6 text-center max-w-sm relative z-10 animate-scale-in"
           style={{ boxShadow: '0 4px 20px -6px rgba(26,26,46,0.08)' }}
         >
           <p className="text-red-600 mb-4 text-sm">{error}</p>
           <button
             onClick={() => router.push('/dashboard')}
-            className="text-white px-5 py-2.5 rounded-xl font-medium text-sm"
+            className="text-white px-5 py-2.5 rounded-xl font-medium text-sm transition-transform hover:-translate-y-0.5"
             style={{ background: '#C81E6E' }}
           >
             Retour au tableau de bord
@@ -168,37 +177,27 @@ export default function BilanPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={bgStyle}>
-      <div
-        className="absolute -top-20 -left-20 w-72 h-72 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#C81E6E' }}
-      />
-      <div
-        className="absolute top-40 -right-16 w-80 h-80 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#87CEEB' }}
-      />
+      <PressingBackground />
 
-      <div className="max-w-2xl mx-auto px-4 py-6 relative">
+      <div className="max-w-2xl mx-auto px-4 py-6 relative z-10">
         <button
           onClick={() => router.push('/dashboard')}
-          className="text-sm text-slate-500 mb-4 flex items-center gap-1"
+          className="text-sm text-slate-500 mb-4 flex items-center gap-1 hover:text-slate-700 transition-colors animate-fade-up"
         >
           ← Tableau de bord
         </button>
 
-        <div className="mb-6">
-          <h1
-            className="text-2xl font-bold tracking-tight"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
-          >
-            Bilan <span style={{ color: '#C81E6E' }}>financier</span>
+        <div className="mb-6 animate-fade-up" style={{ animationDelay: '40ms' }}>
+          <h1 className="text-2xl font-bold tracking-tight font-display" style={{ color: '#1A1A2E' }}>
+            Bilan <span className="text-gradient-pressing">financier</span>
           </h1>
           <p className="text-xs text-slate-400 italic">Comparaisons par période</p>
         </div>
 
         {/* Onglets */}
         <div
-          className="flex gap-1 mb-5 p-1 rounded-2xl bg-white"
-          style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+          className="flex gap-1 mb-5 p-1 rounded-2xl bg-white animate-fade-up"
+          style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)', animationDelay: '90ms' }}
         >
           {TABS.map((tab) => (
             <button
@@ -208,6 +207,7 @@ export default function BilanPage() {
               style={{
                 background: activeTab === tab.key ? '#C81E6E' : 'transparent',
                 color: activeTab === tab.key ? '#FFFFFF' : '#64748B',
+                boxShadow: activeTab === tab.key ? '0 4px 12px -4px rgba(200,30,110,0.5)' : 'none',
               }}
             >
               {tab.label}
@@ -217,14 +217,11 @@ export default function BilanPage() {
 
         {/* Contenu de l'onglet actif */}
         <div
-          className="bg-white rounded-2xl p-6"
-          style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+          key={activeTab}
+          className="glass-card rounded-2xl p-6 shadow-premium-sm animate-fade-up"
         >
           <div className="flex justify-between items-center mb-5">
-            <h2
-              className="font-semibold"
-              style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
-            >
+            <h2 className="font-semibold font-display" style={{ color: '#1A1A2E' }}>
               {active.currentLabel}
             </h2>
             <ChangeBadge value={active.change} />
