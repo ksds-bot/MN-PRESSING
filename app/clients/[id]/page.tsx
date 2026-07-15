@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import PressingBackground from '@/app/components/PressingBackground';
 
 interface Garment {
   id: string;
@@ -108,23 +109,31 @@ export default function ClientDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={bgStyle}>
-        <p className="text-slate-400 text-sm">Chargement...</p>
+      <div className="min-h-screen flex items-center justify-center relative overflow-hidden" style={bgStyle}>
+        <PressingBackground />
+        <div className="relative z-10 flex flex-col items-center gap-4">
+          <div className="washing-machine animate-spin-slow">
+            <div className="drum" />
+            <div className="clothes animate-spin-slower" />
+          </div>
+          <p className="text-slate-400 text-sm">Chargement...</p>
+        </div>
       </div>
     );
   }
 
   if (error || !customer) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4" style={bgStyle}>
+      <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden" style={bgStyle}>
+        <PressingBackground />
         <div
-          className="bg-white rounded-2xl p-6 text-center max-w-sm"
+          className="glass-card rounded-2xl p-6 text-center max-w-sm relative z-10 animate-scale-in"
           style={{ boxShadow: '0 4px 20px -6px rgba(26,26,46,0.08)' }}
         >
           <p className="text-red-600 mb-4 text-sm">{error}</p>
           <button
             onClick={() => router.back()}
-            className="text-white px-5 py-2.5 rounded-xl font-medium text-sm"
+            className="text-white px-5 py-2.5 rounded-xl font-medium text-sm transition-transform hover:-translate-y-0.5"
             style={{ background: '#C81E6E' }}
           >
             Retour
@@ -136,32 +145,22 @@ export default function ClientDetailPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={bgStyle}>
-      <div
-        className="absolute -top-20 -left-20 w-72 h-72 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#C81E6E' }}
-      />
-      <div
-        className="absolute top-40 -right-16 w-80 h-80 rounded-full opacity-20 blur-3xl pointer-events-none"
-        style={{ background: '#87CEEB' }}
-      />
+      <PressingBackground />
 
-      <div className="max-w-2xl mx-auto px-4 py-6 relative">
+      <div className="max-w-2xl mx-auto px-4 py-6 relative z-10">
         <button
           onClick={() => router.back()}
-          className="text-sm text-slate-500 mb-4 flex items-center gap-1"
+          className="text-sm text-slate-500 mb-4 flex items-center gap-1 hover:text-slate-700 transition-colors animate-fade-up"
         >
           ← Retour
         </button>
 
         {/* Fiche client */}
         <div
-          className="bg-white rounded-2xl p-5 mb-5"
-          style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+          className="glass-card rounded-2xl p-5 mb-5 shadow-premium-sm animate-fade-up"
+          style={{ animationDelay: '40ms' }}
         >
-          <h1
-            className="text-xl font-bold mb-1"
-            style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
-          >
+          <h1 className="text-xl font-bold mb-1 font-display" style={{ color: '#1A1A2E' }}>
             {customer.fullName}
           </h1>
           <p className="text-sm text-slate-400">{customer.phoneNumber}</p>
@@ -171,13 +170,13 @@ export default function ClientDetailPage() {
           </p>
 
           <div className="grid grid-cols-2 gap-3 mt-4">
-            <div className="rounded-xl p-3" style={{ background: '#FDF2F8' }}>
+            <div className="rounded-xl p-3 transition-transform hover:-translate-y-0.5" style={{ background: '#FDF2F8' }}>
               <p className="text-xs text-slate-500">Total commandes</p>
               <p className="text-xl font-bold" style={{ color: '#C81E6E' }}>
                 {customer.totalOrders}
               </p>
             </div>
-            <div className="rounded-xl p-3" style={{ background: '#E0F2FE' }}>
+            <div className="rounded-xl p-3 transition-transform hover:-translate-y-0.5" style={{ background: '#E0F2FE' }}>
               <p className="text-xs text-slate-500">Total dépensé</p>
               <p className="text-xl font-bold" style={{ color: '#0369A1' }}>
                 {customer.totalSpent.toLocaleString()} <span className="text-xs">FCFA</span>
@@ -188,27 +187,30 @@ export default function ClientDetailPage() {
 
         {/* Historique commandes */}
         <h2
-          className="font-semibold mb-3"
-          style={{ fontFamily: "'Playfair Display', Georgia, serif", color: '#1A1A2E' }}
+          className="font-semibold mb-3 font-display animate-fade-up"
+          style={{ color: '#1A1A2E', animationDelay: '90ms' }}
         >
           Historique des commandes
         </h2>
 
         {customer.orders.length === 0 ? (
           <div
-            className="bg-white rounded-2xl p-6 text-center"
-            style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+            className="glass-card rounded-2xl p-6 text-center shadow-premium-sm animate-fade-up"
+            style={{ animationDelay: '120ms' }}
           >
             <p className="text-slate-400 text-sm italic">Aucune commande enregistrée.</p>
           </div>
         ) : (
           <div className="space-y-3">
-            {customer.orders.map((order) => (
+            {customer.orders.map((order, i) => (
               <button
                 key={order.id}
                 onClick={() => router.push(`/commandes/${order.id}`)}
-                className="w-full text-left bg-white rounded-2xl p-4 transition-transform active:scale-[0.98]"
-                style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)' }}
+                className="w-full text-left bg-white rounded-2xl p-4 transition-all active:scale-[0.98] hover:-translate-y-0.5 hover:shadow-md animate-fade-up"
+                style={{
+                  boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)',
+                  animationDelay: `${120 + Math.min(i * 40, 400)}ms`,
+                }}
               >
                 <div className="flex justify-between items-start mb-2">
                   <p className="text-xs text-slate-400">
