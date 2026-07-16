@@ -1,0 +1,31 @@
+{
+  "name": "MN Pressing",
+  "short_name": "MN Pressing",
+  "description": "Gestion complète pour un pressing professionnel",
+  "start_url": "/login",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FDF2F8",
+  "theme_color": "#C81E6E",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
