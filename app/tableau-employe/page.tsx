@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import OverdueAlert from '@/app/components/OverdueAlert';
 import PressingBackground from '@/app/components/PressingBackground';
+import AppMenu from '@/app/components/AppMenu';
 
 interface Order {
   id: string;
@@ -94,12 +95,6 @@ export default function TableauEmployePage() {
     fetchOrders();
   }, [router]);
 
-  function handleLogout() {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('user');
-    router.push('/login');
-  }
-
   const stats = useMemo(() => {
     const today = new Date();
     const todayOrders = orders.filter((o) => isSameDay(new Date(o.createdAt), today));
@@ -119,7 +114,7 @@ export default function TableauEmployePage() {
   const recentOrders = useMemo(() => orders.slice(0, 8), [orders]);
 
   const bgStyle = {
-    background: 'linear-gradient(160deg, #FDF2F8 0%, #FFFFFF 40%, #E0F2FE 100%)',
+    background: 'var(--bg-gradient)',
   };
 
   if (loading) {
@@ -131,7 +126,7 @@ export default function TableauEmployePage() {
             <div className="drum" />
             <div className="clothes animate-spin-slower" />
           </div>
-          <p className="text-slate-400 text-sm">Chargement...</p>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Chargement...</p>
         </div>
       </div>
     );
@@ -160,30 +155,16 @@ export default function TableauEmployePage() {
       <PressingBackground />
 
       <div className="max-w-4xl mx-auto px-4 py-6 relative z-10">
-        <div className="flex justify-between items-center mb-6 flex-wrap gap-3 animate-fade-up">
+        <div className="flex justify-between items-center mb-6 animate-fade-up">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight font-display" style={{ color: '#1A1A2E' }}>
+            <h1 className="text-2xl font-bold tracking-tight font-display" style={{ color: 'var(--text-primary)' }}>
               MN <span className="text-gradient-pressing">Pressing</span>
             </h1>
-            <p className="text-xs text-slate-400 italic">
+            <p className="text-xs italic" style={{ color: 'var(--text-muted)' }}>
               {userName ? `Bonjour ${userName}` : 'Mon espace'}
             </p>
           </div>
-          <div className="flex gap-2 flex-wrap">
-            <button
-              onClick={() => router.push('/commandes')}
-              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600 transition-all hover:-translate-y-0.5 hover:shadow-md"
-              style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
-            >
-              Mes commandes
-            </button>
-            <button
-              onClick={() => router.push('/documentation')}
-              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600 transition-all hover:-translate-y-0.5 hover:shadow-md"
-              style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
-            >
-              Documentation
-            </button>
+          <div className="flex items-center gap-2">
             <button
               onClick={() => router.push('/commandes/nouvelle')}
               className="btn-shimmer text-sm font-medium px-4 py-2.5 rounded-xl text-white transition-all hover:-translate-y-0.5"
@@ -194,13 +175,7 @@ export default function TableauEmployePage() {
             >
               + Commande
             </button>
-            <button
-              onClick={handleLogout}
-              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600 transition-all hover:-translate-y-0.5 hover:shadow-md"
-              style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
-            >
-              Déconnexion
-            </button>
+            <AppMenu />
           </div>
         </div>
 
@@ -230,36 +205,36 @@ export default function TableauEmployePage() {
           </div>
 
           <div
-            className="rounded-2xl p-5 bg-white animate-fade-up transition-transform hover:-translate-y-1"
-            style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)', animationDelay: '60ms' }}
+            className="rounded-2xl p-5 animate-fade-up transition-transform hover:-translate-y-1"
+            style={{ background: 'var(--card-solid)', boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)', animationDelay: '60ms' }}
           >
-            <p className="text-xs font-semibold uppercase tracking-wide mb-2 text-slate-400">En cours</p>
-            <p className="text-3xl font-bold font-display" style={{ color: '#1A1A2E' }}>
+            <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: 'var(--text-muted)' }}>En cours</p>
+            <p className="text-3xl font-bold font-display" style={{ color: 'var(--text-primary)' }}>
               {stats.pendingCount}
             </p>
-            <p className="text-xs text-slate-400 mt-1">non livrées</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>non livrées</p>
           </div>
 
           <div
-            className="rounded-2xl p-5 bg-white animate-fade-up transition-transform hover:-translate-y-1"
-            style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)', animationDelay: '120ms' }}
+            className="rounded-2xl p-5 animate-fade-up transition-transform hover:-translate-y-1"
+            style={{ background: 'var(--card-solid)', boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)', animationDelay: '120ms' }}
           >
-            <p className="text-xs font-semibold uppercase tracking-wide mb-2 text-slate-400">Prêtes</p>
+            <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: 'var(--text-muted)' }}>Prêtes</p>
             <p className="text-3xl font-bold font-display" style={{ color: '#C81E6E' }}>
               {stats.readyCount}
             </p>
-            <p className="text-xs text-slate-400 mt-1">à récupérer</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>à récupérer</p>
           </div>
 
           <div
-            className="rounded-2xl p-5 bg-white animate-fade-up transition-transform hover:-translate-y-1"
-            style={{ boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)', animationDelay: '180ms' }}
+            className="rounded-2xl p-5 animate-fade-up transition-transform hover:-translate-y-1"
+            style={{ background: 'var(--card-solid)', boxShadow: '0 4px 20px -6px rgba(26, 26, 46, 0.08)', animationDelay: '180ms' }}
           >
-            <p className="text-xs font-semibold uppercase tracking-wide mb-2 text-slate-400">Restant dû</p>
+            <p className="text-xs font-semibold uppercase tracking-wide mb-2" style={{ color: 'var(--text-muted)' }}>Restant dû</p>
             <p className="text-2xl font-bold font-display" style={{ color: '#EA580C' }}>
               {stats.remainingTotal.toLocaleString()}
             </p>
-            <p className="text-xs text-slate-400 mt-1">FCFA sur mes commandes</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>FCFA sur mes commandes</p>
           </div>
         </div>
 
@@ -270,7 +245,7 @@ export default function TableauEmployePage() {
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2">
               <div className="w-1 h-5 rounded-full" style={{ background: 'linear-gradient(180deg, #C81E6E, #87CEEB)' }} />
-              <h2 className="font-semibold font-display" style={{ color: '#1A1A2E' }}>
+              <h2 className="font-semibold font-display" style={{ color: 'var(--text-primary)' }}>
                 Mes commandes récentes
               </h2>
             </div>
@@ -284,7 +259,7 @@ export default function TableauEmployePage() {
           </div>
 
           {recentOrders.length === 0 ? (
-            <p className="text-slate-400 text-sm italic">Aucune commande enregistrée pour le moment.</p>
+            <p className="text-sm italic" style={{ color: 'var(--text-muted)' }}>Aucune commande enregistrée pour le moment.</p>
           ) : (
             <div className="space-y-2">
               {recentOrders.map((o) => {
@@ -293,11 +268,12 @@ export default function TableauEmployePage() {
                   <div
                     key={o.id}
                     onClick={() => router.push(`/commandes/${o.id}`)}
-                    className="flex items-center justify-between px-3 py-3 rounded-xl hover:bg-slate-50 cursor-pointer border border-slate-50 transition-all hover:shadow-sm hover:-translate-y-0.5"
+                    className="flex items-center justify-between px-3 py-3 rounded-xl cursor-pointer transition-all hover:shadow-sm hover:-translate-y-0.5"
+                    style={{ border: '1px solid var(--border-soft)' }}
                   >
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-slate-700 truncate">{o.customer.fullName}</p>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-sm font-medium truncate" style={{ color: 'var(--text-secondary)' }}>{o.customer.fullName}</p>
+                      <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                         {o.receiptNumber} · {o.garments.length} vêtement{o.garments.length > 1 ? 's' : ''}
                       </p>
                     </div>
