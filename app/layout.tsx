@@ -39,13 +39,19 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-// Évite le flash "blanc" avant l'application du thème sombre au chargement
+// Le thème sombre ne s'applique QUE sur les pages qui l'autorisent explicitement
+// (voir ThemeToggle / AppMenu) — jamais de détection automatique système ici,
+// pour que login/register restent toujours clairs par défaut.
 const themeInitScript = `
 (function() {
   try {
+    var path = window.location.pathname;
+    var allowedPaths = ['/dashboard', '/tableau-employe'];
+    var isAllowed = allowedPaths.some(function(p) { return path.indexOf(p) === 0; });
     var stored = localStorage.getItem('theme');
-    var dark = stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    if (dark) document.documentElement.classList.add('dark');
+    if (isAllowed && stored === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
   } catch (e) {}
 })();
 `;
