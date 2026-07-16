@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import OverdueAlert from '@/app/components/OverdueAlert';
 import PressingBackground from '@/app/components/PressingBackground';
+import AppMenu from '@/app/components/AppMenu';
 
 interface PeriodStats {
   count: number;
@@ -59,7 +60,7 @@ function StatCard({
       style={{
         background: accent
           ? 'linear-gradient(135deg, #C81E6E 0%, #A0164F 100%)'
-          : '#FFFFFF',
+          : 'var(--card-solid)',
         boxShadow: accent
           ? '0 12px 28px -8px rgba(200, 30, 110, 0.45)'
           : '0 4px 20px -6px rgba(26, 26, 46, 0.08)',
@@ -71,31 +72,31 @@ function StatCard({
       )}
       <p
         className="text-xs font-semibold uppercase tracking-wide mb-2 relative"
-        style={{ color: accent ? 'rgba(255,255,255,0.75)' : '#94A3B8' }}
+        style={{ color: accent ? 'rgba(255,255,255,0.75)' : 'var(--text-muted)' }}
       >
         {title}
       </p>
       <p
         className="text-3xl font-bold mb-0.5 font-display relative"
-        style={{ color: accent ? '#FFFFFF' : '#1A1A2E' }}
+        style={{ color: accent ? '#FFFFFF' : 'var(--text-primary)' }}
       >
         {count}
       </p>
       <p
         className="text-xs mb-3 relative"
-        style={{ color: accent ? 'rgba(255,255,255,0.65)' : '#94A3B8' }}
+        style={{ color: accent ? 'rgba(255,255,255,0.65)' : 'var(--text-muted)' }}
       >
         commande{count > 1 ? 's' : ''}
       </p>
       <p
         className="text-lg font-semibold relative"
-        style={{ color: accent ? '#FFFFFF' : '#1A1A2E' }}
+        style={{ color: accent ? '#FFFFFF' : 'var(--text-primary)' }}
       >
         {revenue.toLocaleString()} <span className="text-xs font-normal">FCFA</span>
       </p>
       <p
         className="text-xs relative"
-        style={{ color: accent ? 'rgba(255,255,255,0.65)' : '#94A3B8' }}
+        style={{ color: accent ? 'rgba(255,255,255,0.65)' : 'var(--text-muted)' }}
       >
         encaissés
       </p>
@@ -105,7 +106,7 @@ function StatCard({
           style={{
             borderTop: accent
               ? '1px solid rgba(255,255,255,0.25)'
-              : '1px solid #F1F5F9',
+              : '1px solid var(--border-soft)',
             color: accent ? '#FFE4F0' : '#EA580C',
           }}
         >
@@ -161,14 +162,8 @@ export default function DashboardPage() {
     fetchStats();
   }, [router]);
 
-  function handleLogout() {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('user');
-    router.push('/login');
-  }
-
   const bgStyle = {
-    background: 'linear-gradient(160deg, #FDF2F8 0%, #FFFFFF 40%, #E0F2FE 100%)',
+    background: 'var(--bg-gradient)',
   };
 
   if (loading) {
@@ -180,7 +175,7 @@ export default function DashboardPage() {
             <div className="drum" />
             <div className="clothes animate-spin-slower" />
           </div>
-          <p className="text-slate-400 text-sm">Chargement du tableau de bord...</p>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Chargement du tableau de bord...</p>
         </div>
       </div>
     );
@@ -214,55 +209,15 @@ export default function DashboardPage() {
       <PressingBackground />
 
       <div className="max-w-4xl mx-auto px-4 py-6 relative z-10">
-        {/* En-tête */}
-        <div className="flex justify-between items-center mb-6 flex-wrap gap-3 animate-fade-up">
+        {/* En-tête compact avec menu */}
+        <div className="flex justify-between items-center mb-6 animate-fade-up">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight font-display" style={{ color: '#1A1A2E' }}>
+            <h1 className="text-2xl font-bold tracking-tight font-display" style={{ color: 'var(--text-primary)' }}>
               MN <span className="text-gradient-pressing">Pressing</span>
             </h1>
-            <p className="text-xs text-slate-400 italic">Tableau de bord</p>
+            <p className="text-xs italic" style={{ color: 'var(--text-muted)' }}>Tableau de bord</p>
           </div>
-          <div className="flex gap-2 flex-wrap">
-            <button
-              onClick={() => router.push('/utilisateurs')}
-              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600 transition-all hover:-translate-y-0.5 hover:shadow-md"
-              style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
-            >
-              Utilisateurs
-            </button>
-
-            <button
-              onClick={() => router.push('/documentation')}
-              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600 transition-all hover:-translate-y-0.5 hover:shadow-md"
-              style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
-            >
-              Documentation
-            </button>
-
-            <button
-              onClick={() => router.push('/bilan')}
-              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600 transition-all hover:-translate-y-0.5 hover:shadow-md"
-              style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
-            >
-              Bilan
-            </button>
-
-            <button
-              onClick={() => router.push('/export')}
-              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600 transition-all hover:-translate-y-0.5 hover:shadow-md"
-              style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
-            >
-              Export
-            </button>
-
-            <button
-              onClick={() => router.push('/commandes')}
-              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600 transition-all hover:-translate-y-0.5 hover:shadow-md"
-              style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
-            >
-              Commandes
-            </button>
-
+          <div className="flex items-center gap-2">
             <button
               onClick={() => router.push('/commandes/nouvelle')}
               className="btn-shimmer text-sm font-medium px-4 py-2.5 rounded-xl text-white transition-all hover:-translate-y-0.5"
@@ -273,13 +228,7 @@ export default function DashboardPage() {
             >
               + Commande
             </button>
-            <button
-              onClick={handleLogout}
-              className="text-sm font-medium px-4 py-2.5 rounded-xl bg-white text-slate-600 transition-all hover:-translate-y-0.5 hover:shadow-md"
-              style={{ boxShadow: '0 4px 12px -4px rgba(26,26,46,0.1)' }}
-            >
-              Déconnexion
-            </button>
+            <AppMenu />
           </div>
         </div>
 
@@ -311,7 +260,7 @@ export default function DashboardPage() {
               className="w-1 h-5 rounded-full"
               style={{ background: 'linear-gradient(180deg, #C81E6E, #87CEEB)' }}
             />
-            <h2 className="font-semibold font-display" style={{ color: '#1A1A2E' }}>
+            <h2 className="font-semibold font-display" style={{ color: 'var(--text-primary)' }}>
               Chiffre d&apos;affaires — 7 derniers jours
             </h2>
           </div>
@@ -331,7 +280,7 @@ export default function DashboardPage() {
                   }}
                   title={`${day.revenue.toLocaleString()} FCFA`}
                 />
-                <p className="text-[10px] text-slate-400 font-medium">
+                <p className="text-[10px] font-medium" style={{ color: 'var(--text-muted)' }}>
                   {new Date(day.date).toLocaleDateString('fr-FR', { weekday: 'short' })}
                 </p>
               </div>
@@ -349,13 +298,13 @@ export default function DashboardPage() {
               className="w-1 h-5 rounded-full"
               style={{ background: 'linear-gradient(180deg, #C81E6E, #87CEEB)' }}
             />
-            <h2 className="font-semibold font-display" style={{ color: '#1A1A2E' }}>
+            <h2 className="font-semibold font-display" style={{ color: 'var(--text-primary)' }}>
               Commandes par statut
             </h2>
           </div>
 
           {data.statusCounts.length === 0 ? (
-            <p className="text-slate-400 text-sm italic">
+            <p className="text-sm italic" style={{ color: 'var(--text-muted)' }}>
               Aucune commande enregistrée pour le moment.
             </p>
           ) : (
@@ -363,14 +312,14 @@ export default function DashboardPage() {
               {data.statusCounts.map((s, i) => (
                 <div key={s.status}>
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm text-slate-600 font-medium">
+                    <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>
                       {STATUS_LABELS[s.status] || s.status}
                     </span>
-                    <span className="text-sm font-bold" style={{ color: '#1A1A2E' }}>
+                    <span className="text-sm font-bold" style={{ color: 'var(--text-primary)' }}>
                       {s.count}
                     </span>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                  <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'var(--border-soft)' }}>
                     <div
                       className="h-full rounded-full transition-all duration-700"
                       style={{
