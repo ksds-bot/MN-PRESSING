@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import ThemeToggle from './ThemeToggle';
 
@@ -31,6 +32,11 @@ export default function AppMenu() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [userName, setUserName] = useState('');
   const [showThemeToggle, setShowThemeToggle] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const userStr = localStorage.getItem('user');
@@ -82,8 +88,10 @@ export default function AppMenu() {
         <span className="block w-4 h-0.5 rounded-full" style={{ background: 'var(--text-primary)' }} />
       </button>
 
-      {/* Overlay + tiroir — rendu au niveau racine avec z-index très élevé */}
-      {open && (
+      {/* Overlay + tiroir — rendu via portail directement dans document.body pour
+          échapper à tout ancêtre "overflow-hidden" (ex: le conteneur du dashboard),
+          qui sinon piège le tiroir "position: fixed" et le rend inaccessible/mal empilé */}
+      {open && mounted && createPortal(
         <div className="fixed inset-0" style={{ zIndex: 9999 }}>
           <div
             className="absolute inset-0 animate-fade-in"
@@ -166,7 +174,8 @@ export default function AppMenu() {
               }
             }
           `}</style>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
