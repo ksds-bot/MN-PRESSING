@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 
+const THEME_ALLOWED_PATHS = ['/dashboard', '/tableau-employe'];
+
 export function useTheme() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
@@ -10,12 +12,6 @@ export function useTheme() {
     const preferred = stored === 'dark' ? 'dark' : 'light';
     setTheme(preferred);
     document.documentElement.classList.toggle('dark', preferred === 'dark');
-
-    // Sécurité : si jamais on navigue vers une page d'auth avec le thème
-    // sombre stocké, on ne l'applique jamais là-bas.
-    return () => {
-      document.documentElement.classList.remove('dark');
-    };
   }, []);
 
   function toggleTheme() {
