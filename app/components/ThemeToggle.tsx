@@ -7,15 +7,15 @@ export function useTheme() {
 
   useEffect(() => {
     const stored = localStorage.getItem('theme');
-    const preferred =
-      stored === 'dark' || stored === 'light'
-        ? stored
-        : window.matchMedia('(prefers-color-scheme: dark)').matches
-        ? 'dark'
-        : 'light';
-
+    const preferred = stored === 'dark' ? 'dark' : 'light';
     setTheme(preferred);
     document.documentElement.classList.toggle('dark', preferred === 'dark');
+
+    // Sécurité : si jamais on navigue vers une page d'auth avec le thème
+    // sombre stocké, on ne l'applique jamais là-bas.
+    return () => {
+      document.documentElement.classList.remove('dark');
+    };
   }, []);
 
   function toggleTheme() {
